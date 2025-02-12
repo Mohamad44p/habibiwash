@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
       dynamic: 60,
       static: 3600,
     },
-    optimizeCss: true,
     optimisticClientCache: true,
     webVitalsAttribution: ["CLS", "LCP"],
     optimizePackageImports: ["@/components/ui", "lodash", "framer-motion"],
