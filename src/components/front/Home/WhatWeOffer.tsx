@@ -4,17 +4,17 @@ import { Sparkles, PaintBucket, Shield, Calendar } from "lucide-react"
 
 export default function WhatWeOffer() {
   return (
-    <section className="container mx-auto px-4 py-32">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
+    <section className="container mx-auto px-4 py-16 sm:py-32">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter md:text-5xl lg:text-6xl">
           What We{" "}
           <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Offer</span>
         </h2>
-        <p className="mt-4 text-xl text-muted-foreground">
+        <p className="mt-4 text-base sm:text-xl text-muted-foreground">
           Experience our premium car care services tailored to elevate your vehicle&apos;s appearance and protection
         </p>
       </div>
-      <BentoGrid className="max-w-5xl mx-auto md:auto-rows-[24rem]">
+      <BentoGrid className="max-w-5xl mx-auto md:auto-rows-[20rem] lg:auto-rows-[24rem] gap-3 sm:gap-4">
         {items.map((item, i) => (
           <BentoGridItem
             key={i}

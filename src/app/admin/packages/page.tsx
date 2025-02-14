@@ -1,0 +1,21 @@
+import { Suspense } from "react";
+import { getPackages } from "@/app/actions/packagesActions";
+import PackagesTable from "@/components/admin/packages/PackagesTable";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
+export default async function PackagesPage() {
+  const packages = await getPackages();
+
+  return (
+    <div className="container mx-auto py-10">
+      <h1 className="text-2xl font-bold mb-5">Car Washing Packages</h1>
+      <Link href="/admin/packages/create">
+        <Button>Create New Package</Button>
+      </Link>
+      <Suspense fallback={<div>Loading...</div>}>
+        <PackagesTable initialPackages={packages} />
+      </Suspense>
+    </div>
+  );
+}

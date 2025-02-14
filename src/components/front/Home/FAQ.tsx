@@ -42,18 +42,20 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
-      <div className="text-center mb-12">
-        <Badge className="bg-black text-white rounded-full px-4 py-1 text-sm font-medium mb-4">Support</Badge>
-        <h2 className="text-3xl font-semibold mb-4">
+    <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
+      <div className="text-center mb-8 sm:mb-12">
+        <Badge className="inline-block bg-black text-white rounded-full px-3 sm:px-4 py-1 text-sm font-medium mb-4">
+          Support
+        </Badge>
+        <h2 className="text-2xl sm:text-3xl font-semibold mb-4">
           Frequently asked questions
         </h2>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Still have questions? Call or text us at (971)-123-4567
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {faqData.map((item, index) => (
           <div key={index} className="border-b border-gray-200 pb-4">
             <button

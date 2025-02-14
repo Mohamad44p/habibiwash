@@ -22,11 +22,11 @@ const addOns: AddOn[] = [
 
 export function ServiceAddOns() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="relative overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background rounded-2xl p-6 shadow-2xl hover:shadow-3xl transition-all duration-500 border border-muted/20">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+      <div className="relative overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background rounded-2xl p-4 sm:p-6 shadow-2xl hover:shadow-3xl transition-all duration-500 border border-muted/20">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
         
-        <div className="relative mb-6">
+        <div className="relative mb-4 sm:mb-6">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-primary/70" />
             <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
@@ -44,12 +44,12 @@ export function ServiceAddOns() {
           </p>
         </div>
 
-        <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 [&>*:nth-child(even)]:translate-y-1">
+        <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-2">
           {addOns.map((addon, index) => (
             <div 
               key={index} 
-              className="flex items-center justify-between p-2.5 rounded-xl hover:bg-accent/30 group cursor-pointer backdrop-blur-sm
-                        transform transition-all duration-300 hover:scale-[1.03] hover:-translate-y-0.5
+              className="flex items-center justify-between p-2.5 rounded-xl hover:bg-accent/30 group cursor-pointer
+                        transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
                         border border-transparent hover:border-primary/10 bg-background/50"
             >
               <div className="flex items-center gap-3">

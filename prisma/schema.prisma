@@ -1,0 +1,41 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Package {
+  id          String       @id @default(cuid())
+  name        String
+  image       String?
+  subPackages SubPackage[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model SubPackage {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  prices      Price[]
+  duration    Int // in minutes
+  packageId   String
+  package     Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Price {
+  id           String     @id @default(cuid())
+  vehicleType  String
+  price        Float
+  subPackageId String
+  subPackage   SubPackage @relation(fields: [subPackageId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
