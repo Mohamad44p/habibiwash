@@ -44,25 +44,25 @@ export default function FAQ() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
       <div className="text-center mb-8 sm:mb-12">
-        <Badge className="inline-block bg-black text-white rounded-full px-3 sm:px-4 py-1 text-sm font-medium mb-4">
+        <Badge className="inline-block bg-black text-white rounded-full px-3 sm:px-4 py-1 text-sm font-medium mb-4 dark:bg-white dark:text-black">
           Support
         </Badge>
-        <h2 className="text-2xl sm:text-3xl font-semibold mb-4">
+        <h2 className="text-2xl sm:text-3xl font-semibold mb-4 dark:text-white">
           Frequently asked questions
         </h2>
-        <p className="text-sm sm:text-base text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground dark:text-gray-400">
           Still have questions? Call or text us at (971)-123-4567
         </p>
       </div>
 
       <div className="space-y-3 sm:space-y-4">
         {faqData.map((item, index) => (
-          <div key={index} className="border-b border-gray-200 pb-4">
+          <div key={index} className="border-b border-gray-200 pb-4 dark:border-gray-700">
             <button
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
               className="w-full flex justify-between items-center py-4 text-left focus:outline-none"
             >
-              <span className="text-lg font-medium text-gray-900">
+              <span className="text-lg font-medium text-gray-900 dark:text-white">
                 {item.question}
               </span>
               <motion.span
@@ -70,7 +70,7 @@ export default function FAQ() {
                 transition={{ duration: 0.2 }}
                 className="flex items-center justify-center w-8 h-8"
               >
-                <Plus className="w-5 h-5 text-gray-400" />
+                <Plus className="w-5 h-5 text-gray-400 dark:text-gray-500" />
               </motion.span>
             </button>
             <AnimatePresence>
@@ -82,7 +82,7 @@ export default function FAQ() {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <p className="text-gray-600 pb-4">{item.answer}</p>
+                  <p className="text-gray-600 pb-4 dark:text-gray-400">{item.answer}</p>
                 </motion.div>
               )}
             </AnimatePresence>

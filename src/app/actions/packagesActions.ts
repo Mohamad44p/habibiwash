@@ -34,6 +34,7 @@ export async function createPackage(data: Package) {
               price: price.price,
             })),
           },
+          image: subPackage.image, // Add image field
         })),
       },
     },
@@ -73,6 +74,7 @@ export async function updatePackage(id: string, data: Package) {
               price: price.price,
             })),
           },
+          image: subPackage.image, // Add image field
         })),
       },
     },

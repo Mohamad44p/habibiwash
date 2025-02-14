@@ -16,6 +16,7 @@ export type SubPackage = {
   packageId?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  image?: string; // Add image field
 };
 
 export type Package = {
@@ -45,6 +46,7 @@ type PrismaSubPackage = {
   prices: PrismaPrice[];
   createdAt: Date;
   updatedAt: Date;
+  image: string | null; // Add image field
 };
 
 type PrismaPackage = {
@@ -92,6 +94,7 @@ export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
       packageId: subPackage.packageId,
       createdAt: subPackage.createdAt,
       updatedAt: subPackage.updatedAt,
+      image: subPackage.image ?? undefined, // Add image field
     })),
     createdAt: prismaPackage.createdAt,
     updatedAt: prismaPackage.updatedAt,

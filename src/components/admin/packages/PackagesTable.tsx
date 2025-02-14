@@ -1,36 +1,47 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Package } from '@/types/package'
-import { ColumnDef } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Pencil, Trash } from 'lucide-react'
-import Link from 'next/link'
-import { deletePackage } from '@/app/actions/packagesActions'
-import { DataTable } from './data-table'
+import { useState } from "react";
+import { Package } from "@/types/package";
+import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash } from "lucide-react";
+import Link from "next/link";
+import { deletePackage } from "@/app/actions/packagesActions";
+import { DataTable } from "./data-table";
+import Image from "next/image";
 
-export default function PackagesTable({ initialPackages }: { initialPackages: Package[] }) {
-  const [packages, setPackages] = useState(initialPackages)
+export default function PackagesTable({
+  initialPackages,
+}: {
+  initialPackages: Package[];
+}) {
+  const [packages, setPackages] = useState(initialPackages);
 
   const columns: ColumnDef<Package>[] = [
     {
-      accessorKey: 'name',
-      header: 'Name',
+      accessorKey: "name",
+      header: "Name",
     },
     {
-      accessorKey: 'image',
-      header: 'Image',
+      accessorKey: "image",
+      header: "Image",
       cell: ({ row }) => (
-        <img src={row.original.image || '/placeholder.svg'} alt={row.original.name} className="w-10 h-10 object-cover" />
+        <Image
+          src={row.original.image || "/Logo1.png"}
+          alt={row.original.name}
+          width={40}
+          height={40}
+          className="object-cover"
+        />
       ),
     },
     {
-      accessorKey: 'subPackages',
-      header: 'Sub Packages',
+      accessorKey: "subPackages",
+      header: "Sub Packages",
       cell: ({ row }) => row.original.subPackages.length,
     },
     {
-      id: 'actions',
+      id: "actions",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <Link href={`/admin/packages/${row.original.id}/edit`}>
@@ -43,9 +54,9 @@ export default function PackagesTable({ initialPackages }: { initialPackages: Pa
             variant="destructive"
             size="sm"
             onClick={async () => {
-              if (confirm('Are you sure you want to delete this package?')) {
-                await deletePackage(row.original.id!)
-                setPackages(packages.filter(p => p.id !== row.original.id))
+              if (confirm("Are you sure you want to delete this package?")) {
+                await deletePackage(row.original.id!);
+                setPackages(packages.filter((p) => p.id !== row.original.id));
               }
             }}
           >
@@ -55,7 +66,7 @@ export default function PackagesTable({ initialPackages }: { initialPackages: Pa
         </div>
       ),
     },
-  ]
+  ];
 
   return (
     <DataTable
@@ -64,5 +75,5 @@ export default function PackagesTable({ initialPackages }: { initialPackages: Pa
       filterColumn="name"
       filterPlaceholder="Filter packages..."
     />
-  )
+  );
 }

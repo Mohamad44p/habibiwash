@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { Menu, X, Phone } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -14,28 +15,38 @@ const navItems = [
   { name: "Get a Quote", href: "/quote" },
   { name: "Blog", href: "/blog" },
   { name: "FAQ", href: "/faq" },
-]
+];
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-md" : "bg-transparent"}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/95 backdrop-blur-md shadow-md"
+          : "bg-transparent"
+      }`}
     >
       <nav className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/Logo1.png" alt="ChainSwitch" width={150} height={150} className="rounded-full object-cover" />
+            <Image
+              src="/Logo1.png"
+              alt="ChainSwitch"
+              width={150}
+              height={150}
+              className="rounded-full object-cover"
+            />
           </Link>
           <div className="hidden lg:flex items-center space-x-6">
             {navItems.map((item) => (
@@ -49,18 +60,20 @@ export default function Navbar() {
             ))}
           </div>
           <div className="hidden lg:flex items-center space-x-4">
-            <Link
-              href="tel:+1234567890"
-              className="flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              <Phone className="h-4 w-4 mr-2" />
-              (123) 456-7890
-            </Link>
+            <ThemeToggle />
             <Button size="sm">Schedule Online</Button>
           </div>
           <div className="lg:hidden">
-            <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </Button>
           </div>
         </div>
@@ -75,13 +88,7 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-            <Link
-              href="tel:+1234567890"
-              className="flex items-center text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              <Phone className="h-4 w-4 mr-2" />
-              (123) 456-7890
-            </Link>
+            <ThemeToggle />
             <Button size="sm" className="w-full">
               Schedule Online
             </Button>
@@ -89,6 +96,5 @@ export default function Navbar() {
         )}
       </nav>
     </header>
-  )
+  );
 }
-

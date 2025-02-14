@@ -26,6 +26,7 @@ const subPackageSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   duration: z.coerce.number().min(1, 'Duration must be at least 1 minute'), // Changed to coerce
   prices: z.array(priceSchema).min(1, 'At least one price is required'),
+  image: z.string().optional(), // Add image field
 })
 
 const packageSchema = z.object({
@@ -45,7 +46,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
     defaultValues: initialData || {
       name: '',
       image: '',
-      subPackages: [{ name: '', description: '', duration: 0, prices: [{ vehicleType: '', price: 0 }] }],
+      subPackages: [{ name: '', description: '', duration: 0, prices: [{ vehicleType: '', price: 0 }], image: '' }],
     },
   })
 
@@ -80,30 +81,28 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-7xl mx-auto space-y-8 p-6">
-        <div className="bg-white rounded-xl shadow-sm p-8 space-y-6">
-          {/* Package Name */}
+        <div className="bg-white rounded-xl shadow-sm p-8 space-y-6 dark:bg-[#0F0F12] dark:shadow-none">
           <div className="space-y-6">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg font-medium">Package Name</FormLabel>
+                  <FormLabel className="text-lg font-medium dark:text-gray-100">Package Name</FormLabel>
                   <FormControl>
-                    <Input {...field} className="w-full" />
+                    <Input {...field} className="w-full dark:bg-[#0F0F12] dark:text-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Package Image */}
             <FormField
               control={form.control}
               name="image"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg font-medium">Package Image</FormLabel>
+                  <FormLabel className="text-lg font-medium dark:text-gray-100">Package Image</FormLabel>
                   <FormControl>
                     <ImageUpload 
                       value={field.value} 
@@ -117,10 +116,9 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
             />
           </div>
 
-          {/* Sub Packages Section */}
-          <div className="space-y-6 pt-6 border-t">
+          <div className="space-y-6 pt-6 border-t dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-medium text-gray-900">Sub Packages</h3>
+              <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100">Sub Packages</h3>
               <Button
                 type="button"
                 variant="outline"
@@ -128,7 +126,8 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                   name: '',
                   description: '',
                   duration: 0,
-                  prices: [{ vehicleType: '', price: 0 }]
+                  prices: [{ vehicleType: '', price: 0 }],
+                  image: ''
                 })}
                 className="flex items-center gap-2"
               >
@@ -140,7 +139,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
               {subPackagesArray.fields.map((subPackageField, subPackageIndex) => (
                 <div
                   key={subPackageField.id}
-                  className="relative bg-gray-50 rounded-xl p-6 space-y-6 border border-gray-200"
+                  className="relative bg-gray-50 rounded-xl p-6 space-y-6 border border-gray-200 dark:dark:bg-[#0F0F12] dark:border-gray-600"
                 >
                   <Button
                     type="button"
@@ -159,9 +158,9 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                       name={`subPackages.${subPackageIndex}.name`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel className="dark:text-gray-200">Name</FormLabel>
                           <FormControl>
-                            <Input {...field} className="bg-white" />
+                            <Input {...field} className="bg-white dark:bg-[#0F0F12] dark:text-white" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -174,12 +173,12 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                       name={`subPackages.${subPackageIndex}.duration`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Duration (minutes)</FormLabel>
+                          <FormLabel className="dark:text-gray-200">Duration (minutes)</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
                               min="1"
-                              className="bg-white"
+                              className="bg-white dark:bg-[#0F0F12] dark:text-white"
                               {...field}
                               onChange={(e) => field.onChange(e.target.valueAsNumber)}
                             />
@@ -195,11 +194,30 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                       name={`subPackages.${subPackageIndex}.description`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Description</FormLabel>
+                          <FormLabel className="dark:text-gray-200">Description</FormLabel>
                           <FormControl>
-                            <div className="border rounded-lg bg-white overflow-hidden">
+                            <div className="border rounded-lg bg-white overflow-hidden dark:bg-[#0F0F12] dark:border-gray-700">
                               <RichTextEditor content={field.value} onChange={field.onChange} />
                             </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Sub Package Image */}
+                    <FormField
+                      control={form.control}
+                      name={`subPackages.${subPackageIndex}.image`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-lg font-medium dark:text-gray-100">Sub Package Image</FormLabel>
+                          <FormControl>
+                            <ImageUpload 
+                              value={field.value} 
+                              onChange={field.onChange} 
+                              height="200px" 
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -220,7 +238,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
           </div>
         </div>
 
-        <div className="flex justify-end gap-4 sticky bottom-0 bg-white p-4 border-t shadow-lg">
+        <div className="flex justify-end gap-4 sticky bottom-0 bg-white p-4 border-t shadow-lg dark:bg-[#0F0F12] dark:border-gray-700 dark:shadow-none">
           <Button
             type="button"
             variant="outline"
@@ -249,7 +267,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
   );
 }
 
-// Improved PriceFields component with better styling
 function PriceFields({ control, subPackageIndex }: { control: Control<PackageFormValues>, subPackageIndex: number }) {
   const { fields: priceFields, append: appendPrice, remove: removePrice } = useFieldArray({
     control,
@@ -259,7 +276,7 @@ function PriceFields({ control, subPackageIndex }: { control: Control<PackageFor
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-md font-medium text-gray-900">Price List</h4>
+        <h4 className="text-md font-medium text-gray-900 dark:text-gray-100">Price List</h4>
         <Button
           type="button"
           variant="outline"
@@ -274,10 +291,10 @@ function PriceFields({ control, subPackageIndex }: { control: Control<PackageFor
       <div className="space-y-4">
         {priceFields.map((priceField, priceIndex) => (
           <div key={priceField.id} 
-               className="p-4 rounded-lg bg-white border border-gray-200 space-y-4"
+               className="p-4 rounded-lg bg-white border border-gray-200 space-y-4 dark:bg-[#0F0F12] dark:border-gray-600"
           >
             <div className="flex justify-between items-center">
-              <h5 className="text-sm font-medium text-gray-700">Price #{priceIndex + 1}</h5>
+              <h5 className="text-sm font-medium text-gray-700 dark:text-gray-200">Price #{priceIndex + 1}</h5>
               <Button
                 type="button"
                 variant="ghost"
@@ -295,9 +312,9 @@ function PriceFields({ control, subPackageIndex }: { control: Control<PackageFor
                 name={`subPackages.${subPackageIndex}.prices.${priceIndex}.vehicleType`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Vehicle Type</FormLabel>
+                    <FormLabel className="dark:text-gray-200">Vehicle Type</FormLabel>
                     <FormControl>
-                      <Input {...field} className="bg-white" />
+                      <Input {...field} className="bg-white dark:bg-[#0F0F12] dark:text-white" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -309,13 +326,13 @@ function PriceFields({ control, subPackageIndex }: { control: Control<PackageFor
                 name={`subPackages.${subPackageIndex}.prices.${priceIndex}.price`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price</FormLabel>
+                    <FormLabel className="dark:text-gray-200">Price</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
                         type="number" 
                         step="0.01"
-                        className="bg-white"
+                        className="bg-white dark:bg-[#0F0F12] dark:text-white"
                         onChange={(e) => field.onChange(parseFloat(e.target.value))}
                       />
                     </FormControl>
