@@ -13,6 +13,7 @@ import { RichTextEditor } from '@/components/front/Editor/RichTextEditor'
 import { ImageUpload } from '@/lib/ImageUpload'
 import { createPackage, updatePackage } from '@/app/actions/packagesActions'
 import { X, Plus, Trash2 } from 'lucide-react';
+import { Switch } from "@/components/ui/switch" // Add this import
 
 const priceSchema = z.object({
   id: z.string().optional(),
@@ -32,6 +33,7 @@ const subPackageSchema = z.object({
 const packageSchema = z.object({
   name: z.string().min(1, 'Package name is required'),
   image: z.string().optional(),
+  featured: z.boolean().default(false), // Add featured field
   subPackages: z.array(subPackageSchema).min(1, 'At least one sub package is required'),
 })
 
@@ -46,6 +48,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
     defaultValues: initialData || {
       name: '',
       image: '',
+      featured: false, // Add default value
       subPackages: [{ name: '', description: '', duration: 0, prices: [{ vehicleType: '', price: 0 }], image: '' }],
     },
   })
@@ -93,6 +96,28 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                     <Input {...field} className="w-full dark:bg-[#0F0F12] dark:text-white" />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Add featured field after name field */}
+            <FormField
+              control={form.control}
+              name="featured"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base dark:text-gray-100">Featured Package</FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      This package will be highlighted in the booking page
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />

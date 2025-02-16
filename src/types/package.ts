@@ -23,6 +23,7 @@ export type Package = {
   id?: string;
   name: string;
   image?: string;
+  featured?: boolean; // Add featured field
   subPackages: SubPackage[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -53,6 +54,7 @@ type PrismaPackage = {
   id: string;
   name: string;
   image: string | null;
+  featured: boolean; // Add featured field
   subPackages: PrismaSubPackage[];
   createdAt: Date;
   updatedAt: Date;
@@ -78,6 +80,7 @@ export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
     id: prismaPackage.id,
     name: prismaPackage.name,
     image: prismaPackage.image ?? undefined,
+    featured: prismaPackage.featured, // Add featured field
     subPackages: prismaPackage.subPackages.map((subPackage) => ({
       id: subPackage.id,
       name: subPackage.name,

@@ -1,19 +1,13 @@
 "use client";
 
 import {
-  BarChart2,
-  Receipt,
-  Building2,
-  CreditCard,
-  Folder,
-  Wallet,
-  Users2,
-  Shield,
-  MessagesSquare,
-  Video,
   Settings,
   HelpCircle,
   Menu,
+  Clock,
+  Plus,
+  Book,
+  Package,
 } from "lucide-react";
 
 import { Home } from "lucide-react";
@@ -101,51 +95,17 @@ export default function Sidebar() {
                   <NavItem href="#" icon={Home}>
                     Dashboard
                   </NavItem>
-                  <NavItem href="/admin/packages" icon={BarChart2}>
-                   Packages
+                  <NavItem href="/admin/packages" icon={Package}>
+                    Packages
                   </NavItem>
-                  <NavItem href="#" icon={Building2}>
-                    Organization
+                  <NavItem href="/admin/bookings" icon={Book}>
+                    bookings
                   </NavItem>
-                  <NavItem href="#" icon={Folder}>
-                    Projects
+                  <NavItem href="/admin/add-ons" icon={Plus}>
+                    Add-ons
                   </NavItem>
-                </div>
-              </div>
-
-              <div>
-                <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  Finance
-                </div>
-                <div className="space-y-1">
-                  <NavItem href="#" icon={Wallet}>
-                    Transactions
-                  </NavItem>
-                  <NavItem href="#" icon={Receipt}>
-                    Invoices
-                  </NavItem>
-                  <NavItem href="#" icon={CreditCard}>
-                    Payments
-                  </NavItem>
-                </div>
-              </div>
-
-              <div>
-                <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  Team
-                </div>
-                <div className="space-y-1">
-                  <NavItem href="#" icon={Users2}>
-                    Members
-                  </NavItem>
-                  <NavItem href="#" icon={Shield}>
-                    Permissions
-                  </NavItem>
-                  <NavItem href="#" icon={MessagesSquare}>
-                    Chat
-                  </NavItem>
-                  <NavItem href="#" icon={Video}>
-                    Meetings
+                  <NavItem href="/admin/time-slots" icon={Clock}>
+                    Time-slots
                   </NavItem>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Package } from "@/types/package";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash, Star } from "lucide-react";
 import Link from "next/link";
 import { deletePackage } from "@/app/actions/packagesActions";
 import { DataTable } from "./data-table";
@@ -39,6 +39,13 @@ export default function PackagesTable({
       accessorKey: "subPackages",
       header: "Sub Packages",
       cell: ({ row }) => row.original.subPackages.length,
+    },
+    {
+      accessorKey: "featured",
+      header: "Featured",
+      cell: ({ row }) => row.original.featured ? (
+        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+      ) : null,
     },
     {
       id: "actions",

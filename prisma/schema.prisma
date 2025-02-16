@@ -13,9 +13,11 @@ model Package {
   id          String       @id @default(cuid())
   name        String
   image       String?
+  featured    Boolean      @default(false) // Add featured field
   subPackages SubPackage[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  Booking     Booking[]
 }
 
 model SubPackage {
@@ -28,7 +30,7 @@ model SubPackage {
   package     Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  image       String?  // Add image field
+  image       String?
 }
 
 model Price {
@@ -39,4 +41,55 @@ model Price {
   subPackage   SubPackage @relation(fields: [subPackageId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  packageId     String
+  package       Package       @relation(fields: [packageId], references: [id])
+  subPackageId  String?
+  vehicleType   String
+  date          DateTime
+  time          String
+  addOns        AddOn[]
+  timeSlot      TimeSlot      @relation(fields: [timeSlotId], references: [id])
+  timeSlotId    String
+  customerName  String
+  customerEmail String
+  customerPhone String
+  notes         String?
+  status        BookingStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model AddOn {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  icon        String    // Make sure this line is present
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model TimeSlot {
+  id        String    @id @default(cuid())
+  date      DateTime
+  startTime String
+  endTime   String
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  Booking   Booking[]
+
+  @@unique([date, startTime]) 
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
 }

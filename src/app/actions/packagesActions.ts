@@ -23,6 +23,7 @@ export async function createPackage(data: Package) {
     data: {
       name: data.name,
       image: data.image,
+      featured: data.featured, // Add featured field
       subPackages: {
         create: data.subPackages.map((subPackage) => ({
           name: subPackage.name,
@@ -52,17 +53,15 @@ export async function createPackage(data: Package) {
 }
 
 export async function updatePackage(id: string, data: Package) {
-  // First, delete existing sub-packages and their prices
   await db.subPackage.deleteMany({
     where: { packageId: id }
   });
-
-  // Then update the package with new data
   const result = await db.package.update({
     where: { id },
     data: {
       name: data.name,
       image: data.image,
+      featured: data.featured, 
       subPackages: {
         create: data.subPackages.map((subPackage) => ({
           name: subPackage.name,
