@@ -19,7 +19,7 @@ const faqData: FAQItem[] = [
   {
     question: "How do I book an appointment?",
     answer:
-      "Booking an appointment with HabibiWash is easy! You can book directly through our website, use our mobile app, or call us. Select your preferred service, choose a convenient time slot, and we'll confirm your booking instantly.",
+      "Booking an appointment with HabibiWash is easy! You can book directly through our website, or call us. Select your preferred service, choose a convenient time slot, and we'll confirm your booking instantly.",
   },
   {
     question: "Do I need to call to get a quote first?",
@@ -34,7 +34,7 @@ const faqData: FAQItem[] = [
   {
     question: "How do I pay?",
     answer:
-      "We accept multiple payment methods including credit/debit cards, digital wallets (Apple Pay, Google Pay), and cash. You can pay either in advance while booking online or after the service is completed at our location.",
+      "We accept multiple payment methods including credit/debit cards, digital wallets (Apple Pay, Zelle , Venmo), and cash. You can pay when meeting up.",
   },
 ];
 
@@ -51,13 +51,16 @@ export default function FAQ() {
           Frequently asked questions
         </h2>
         <p className="text-sm sm:text-base text-muted-foreground dark:text-gray-400">
-          Still have questions? Call or text us at (971)-123-4567
+          Still have questions? Call or text us at 9452166478
         </p>
       </div>
 
       <div className="space-y-3 sm:space-y-4">
         {faqData.map((item, index) => (
-          <div key={index} className="border-b border-gray-200 pb-4 dark:border-gray-700">
+          <div
+            key={index}
+            className="border-b border-gray-200 pb-4 dark:border-gray-700"
+          >
             <button
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
               className="w-full flex justify-between items-center py-4 text-left focus:outline-none"
@@ -82,7 +85,9 @@ export default function FAQ() {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <p className="text-gray-600 pb-4 dark:text-gray-400">{item.answer}</p>
+                  <p className="text-gray-600 pb-4 dark:text-gray-400">
+                    {item.answer}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -1,10 +1,18 @@
-"use client"
+"use client";
 
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Facebook, Instagram, Mail, MapPin, Phone, Twitter } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Facebook,
+  Instagram,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { FaTiktok } from "react-icons/fa";
+
 
 const Footer = () => {
   return (
@@ -12,7 +20,10 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-4 sm:space-y-6">
-            <Link href="/" className="block sm:inline-block text-center sm:text-left">
+            <Link
+              href="/"
+              className="block sm:inline-block text-center sm:text-left"
+            >
               <Image
                 src="/Logo1.png"
                 alt="HabibiWash"
@@ -27,7 +38,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <Link
-                href="#"
+                href="https://www.facebook.com/share/1A664ar7RZ/?mibextid=wwXIfr"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
                 <Facebook className="h-5 w-5" />
@@ -36,10 +47,10 @@ const Footer = () => {
                 href="#"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
-                <Twitter className="h-5 w-5" />
+                <FaTiktok className="h-5 w-5" />
               </Link>
               <Link
-                href="#"
+                href="https://www.instagram.com/habibiwash99?igsh=aTkzYmVndWMxb3Zo"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
                 <Instagram className="h-5 w-5" />
@@ -47,23 +58,27 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Make quick links and contact info 2 columns on small screens */}
           <div className="grid grid-cols-2 sm:grid-cols-1 gap-8 sm:gap-0">
             <div>
               <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
               <ul className="space-y-4">
-                {["Home", "About", "Services", "Book Online", "Blog", "Contact"].map(
-                  (item) => (
-                    <li key={item}>
-                      <Link
-                        href="#"
-                        className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        {item}
-                      </Link>
-                    </li>
-                  )
-                )}
+                {[
+                  "Home",
+                  "About",
+                  "Services",
+                  "Book Online",
+                  "Blog",
+                  "Contact",
+                ].map((item) => (
+                  <li key={item}>
+                    <Link
+                      href="#"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {item}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -76,11 +91,11 @@ const Footer = () => {
                 </li>
                 <li className="flex items-center text-sm text-muted-foreground">
                   <Phone className="h-5 w-5 mr-3 text-primary" />
-                  (971) 123-4567
+                  9452166478
                 </li>
                 <li className="flex items-center text-sm text-muted-foreground">
                   <Mail className="h-5 w-5 mr-3 text-primary" />
-                  info@habibiwash.com
+                  habibiwash99@gmail.com
                 </li>
               </ul>
             </div>
@@ -106,8 +121,6 @@ const Footer = () => {
             </div>
           </div>
         </div>
-
-        {/* Bottom bar with improved mobile layout */}
         <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-800">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <p className="text-sm text-muted-foreground">
@@ -131,7 +144,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
