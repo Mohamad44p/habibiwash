@@ -7,28 +7,14 @@ import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Package as PrismaPackage, VehicleType } from '@prisma/client';  // Import from @prisma/client instead
-
-interface Package extends PrismaPackage {
-  subPackages?: {
-    id?: string;
-    name: string;
-    description: string;
-    duration: number;
-    prices: {
-      id?: string;
-      vehicleType: VehicleType;
-      price: number;
-    }[];
-    image?: string;
-  }[];
-}
+import { VehicleType } from '@prisma/client'
+import { Package } from '@/types/package'
 import { useRouter } from 'next/navigation'
 import { RichTextEditor } from '@/components/front/Editor/RichTextEditor'
 import { ImageUpload } from '@/lib/ImageUpload'
 import { createPackage, updatePackage } from '@/app/actions/packagesActions'
 import { X, Plus, Trash2 } from 'lucide-react';
-import { Switch } from "@/components/ui/switch" // Add this import
+import { Switch } from "@/components/ui/switch"
 
 const priceSchema = z.object({
   id: z.string().optional(),
@@ -42,15 +28,15 @@ const subPackageSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, 'Sub package name is required'),
   description: z.string().min(1, 'Description is required'),
-  duration: z.coerce.number().min(1, 'Duration must be at least 1 minute'), // Changed to coerce
+  duration: z.coerce.number().min(1, 'Duration must be at least 1 minute'), 
   prices: z.array(priceSchema).min(1, 'At least one price is required'),
-  image: z.string().optional(), // Add image field
+  image: z.string().optional(),
 })
 
 const packageSchema = z.object({
   name: z.string().min(1, 'Package name is required'),
   image: z.string().optional(),
-  featured: z.boolean().default(false), // Add featured field
+  featured: z.boolean().default(false),
   basePrice: z.number().min(0, 'Base price must be a positive number'),
   subPackages: z.array(subPackageSchema).min(1, 'At least one sub package is required'),
 })
@@ -92,7 +78,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
   const onSubmit = async (data: PackageFormValues) => {
     setIsSubmitting(true)
     try {
-      // If image has changed, delete the old one
       if (initialData?.image && initialData.image !== data.image) {
         await fetch(`/api/upload?url=${encodeURIComponent(initialData.image)}`, {
           method: 'DELETE',
@@ -100,9 +85,15 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
       }
 
       if (initialData) {
-        await updatePackage(initialData.id!, data)
+        await updatePackage(initialData.id, {
+          ...data,
+          featured: data.featured ?? false,
+        })
       } else {
-        await createPackage(data)
+        await createPackage({
+          ...data,
+          featured: data.featured ?? false,
+        })
       }
       router.push('/admin/packages')
     } catch (error) {
@@ -130,8 +121,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                 </FormItem>
               )}
             />
-
-            {/* Add base price field after name field */}
             <FormField
               control={form.control}
               name="basePrice"
@@ -151,8 +140,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                 </FormItem>
               )}
             />
-
-            {/* Add featured field after name field */}
             <FormField
               control={form.control}
               name="featured"
@@ -229,7 +216,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                   </Button>
 
                   <div className="space-y-6">
-                    {/* Sub Package Name */}
                     <FormField
                       control={form.control}
                       name={`subPackages.${subPackageIndex}.name`}
@@ -243,8 +229,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                         </FormItem>
                       )}
                     />
-
-                    {/* Duration */}
                     <FormField
                       control={form.control}
                       name={`subPackages.${subPackageIndex}.duration`}
@@ -264,8 +248,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                         </FormItem>
                       )}
                     />
-
-                    {/* Description */}
                     <FormField
                       control={form.control}
                       name={`subPackages.${subPackageIndex}.description`}
@@ -281,8 +263,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                         </FormItem>
                       )}
                     />
-
-                    {/* Sub Package Image */}
                     <FormField
                       control={form.control}
                       name={`subPackages.${subPackageIndex}.image`}
@@ -300,8 +280,6 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                         </FormItem>
                       )}
                     />
-
-                    {/* Prices */}
                     <div className="pt-4">
                       <PriceFields
                         control={form.control}

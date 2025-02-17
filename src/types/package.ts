@@ -32,14 +32,14 @@ export type AddOn = {
 };
 
 export type Package = {
-  id?: string;
+  id: string; // Make id required
   name: string;
   image?: string;
-  featured?: boolean; // Add featured field
+  featured: boolean; // Make featured required with a default value
   subPackages: SubPackage[];
-  addOns?: AddOn[]; // Make addOns optional
-  createdAt?: Date;
-  updatedAt?: Date;
+  addOns?: AddOn[];
+  createdAt: Date; // Make dates required
+  updatedAt: Date;
   basePrice: number;
 };
 
@@ -100,11 +100,13 @@ export function isPrismaPackage(obj: unknown): obj is Package {
 }
 
 export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
+  if (!prismaPackage.id) throw new Error('Package must have an ID');
+  
   return {
     id: prismaPackage.id,
     name: prismaPackage.name,
     image: prismaPackage.image ?? undefined,
-    featured: prismaPackage.featured,
+    featured: prismaPackage.featured ?? false,
     subPackages: prismaPackage.subPackages.map((subPackage) => ({
       id: subPackage.id,
       name: subPackage.name,
@@ -121,7 +123,7 @@ export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
       packageId: subPackage.packageId,
       createdAt: subPackage.createdAt,
       updatedAt: subPackage.updatedAt,
-      image: subPackage.image ?? undefined, // Add image field
+      image: subPackage.image ?? undefined,
     })),
     addOns: prismaPackage.addOns.map((addOn) => ({
       id: addOn.id,
@@ -129,7 +131,7 @@ export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
       description: addOn.description,
       price: addOn.price,
       icon: addOn.icon,
-    })), 
+    })),
     createdAt: prismaPackage.createdAt,
     updatedAt: prismaPackage.updatedAt,
     basePrice: prismaPackage.basePrice,

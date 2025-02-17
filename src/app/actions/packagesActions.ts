@@ -19,6 +19,9 @@ type PackageWithRelations = Prisma.PackageGetPayload<{
   include: typeof packageInclude;
 }>;
 
+// Add a type for the form data
+type PackageFormData = Omit<Package, 'id' | 'createdAt' | 'updatedAt' | 'addOns'>;
+
 export async function getPackages(): Promise<Package[]> {
   try {
     const packages = await db.package.findMany({
@@ -34,13 +37,13 @@ export async function getPackages(): Promise<Package[]> {
   }
 }
 
-export async function createPackage(data: Package) {
+export async function createPackage(data: PackageFormData) {
   try {
     const result = await db.package.create({
       data: {
         name: data.name,
         image: data.image ?? null,
-        featured: data.featured ?? false,
+        featured: data.featured,
         basePrice: data.basePrice,
         subPackages: {
           create: data.subPackages.map((subPackage) => ({
@@ -68,7 +71,7 @@ export async function createPackage(data: Package) {
   }
 }
 
-export async function updatePackage(id: string, data: Package) {
+export async function updatePackage(id: string, data: PackageFormData) {
   try {
     await db.subPackage.deleteMany({
       where: { packageId: id },
@@ -79,7 +82,7 @@ export async function updatePackage(id: string, data: Package) {
       data: {
         name: data.name,
         image: data.image ?? null,
-        featured: data.featured ?? false,
+        featured: data.featured,
         basePrice: data.basePrice,
         subPackages: {
           create: data.subPackages.map((subPackage) => ({

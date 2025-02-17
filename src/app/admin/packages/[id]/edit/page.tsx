@@ -1,7 +1,7 @@
 import db from "@/app/db/db";
 import PackageForm from "@/components/admin/packages/PackageForm";
 import { notFound } from "next/navigation";
-import {normalizePrismaPackage } from "@/types/package";
+import { normalizePrismaPackage } from "@/types/package";
 
 export default async function EditPackagePage(
   props: {
@@ -25,12 +25,17 @@ export default async function EditPackagePage(
     notFound();
   }
 
-  const normalizedPackage = normalizePrismaPackage(result);
-
-  return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-5">Edit Package: {normalizedPackage.name}</h1>
-      <PackageForm initialData={normalizedPackage} />
-    </div>
-  );
+  try {
+    const normalizedPackage = normalizePrismaPackage(result);
+    
+    return (
+      <div className="container mx-auto py-10">
+        <h1 className="text-2xl font-bold mb-5">Edit Package: {normalizedPackage.name}</h1>
+        <PackageForm initialData={normalizedPackage} />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error normalizing package:", error);
+    notFound();
+  }
 }
