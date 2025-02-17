@@ -1,6 +1,10 @@
+import { VehicleType as PrismaVehicleType } from '@prisma/client';
+
+export { VehicleType } from '@prisma/client';
+
 export type Price = {
   id?: string;
-  vehicleType: string;
+  vehicleType: PrismaVehicleType;
   price: number;
   subPackageId?: string;
   createdAt?: Date;
@@ -16,7 +20,7 @@ export type SubPackage = {
   packageId?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  image?: string; // Add image field
+  image?: string; 
 };
 
 export type AddOn = {
@@ -36,11 +40,12 @@ export type Package = {
   addOns?: AddOn[]; // Make addOns optional
   createdAt?: Date;
   updatedAt?: Date;
+  basePrice: number;
 };
 
 type PrismaPrice = {
   id: string;
-  vehicleType: string;
+  vehicleType: PrismaVehicleType;
   price: number;
   subPackageId: string;
   createdAt: Date;
@@ -76,6 +81,7 @@ type PrismaPackage = {
   addOns: PrismaAddOn[]; // Add addOns field
   createdAt: Date;
   updatedAt: Date;
+  basePrice: number;
 };
 
 // Type guard for Prisma response
@@ -126,5 +132,6 @@ export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
     })), 
     createdAt: prismaPackage.createdAt,
     updatedAt: prismaPackage.updatedAt,
+    basePrice: prismaPackage.basePrice,
   };
 }

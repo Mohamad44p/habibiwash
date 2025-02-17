@@ -15,7 +15,7 @@ export default function PackagesTable({
 }: {
   initialPackages: Package[];
 }) {
-  const [packages, setPackages] = useState(initialPackages);
+  const [packages, setPackages] = useState<Package[]>(initialPackages);
 
   const columns: ColumnDef<Package>[] = [
     {
@@ -26,13 +26,16 @@ export default function PackagesTable({
       accessorKey: "image",
       header: "Image",
       cell: ({ row }) => (
-        <Image
-          src={row.original.image || "/Logo1.png"}
-          alt={row.original.name}
-          width={40}
-          height={40}
-          className="object-cover"
-        />
+        <div className="relative w-10 h-10">
+          <Image
+            key={row.original.id}
+            src={row.original.image || "/Logo1.png"}
+            alt={row.original.name}
+            fill
+            className="object-cover rounded"
+            sizes="40px"
+          />
+        </div>
       ),
     },
     {
@@ -76,11 +79,13 @@ export default function PackagesTable({
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={packages}
-      filterColumn="name"
-      filterPlaceholder="Filter packages..."
-    />
+    <div suppressHydrationWarning>
+      <DataTable
+        columns={columns}
+        data={packages}
+        filterColumn="name"
+        filterPlaceholder="Filter packages..."
+      />
+    </div>
   );
 }

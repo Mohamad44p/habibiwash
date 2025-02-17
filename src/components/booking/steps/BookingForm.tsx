@@ -4,18 +4,32 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { motion, AnimatePresence } from "motion/react"
-import { UserIcon, MailIcon, PhoneIcon, MessageSquareIcon } from "lucide-react"
+import { UserIcon, MailIcon, PhoneIcon, MessageSquareIcon, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { cn } from "@/lib/utils"
+
+const phoneRegex = /^(\+\d{1,3}[-.]?)?\s*(?:\(?\d{3}\)?[-.]?\s*)?\d{3}[-.]?\s*\d{4}$/;
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  notes: z.string().optional(),
+  name: z.string()
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be less than 50 characters")
+    .regex(/^[a-zA-Z\s]*$/, "Name can only contain letters and spaces"),
+  email: z.string()
+    .email("Please enter a valid email address")
+    .min(5, "Email must be at least 5 characters")
+    .max(100, "Email must be less than 100 characters"),
+  phone: z.string()
+    .regex(phoneRegex, "Please enter a valid phone number")
+    .min(10, "Phone number must be at least 10 digits"),
+  notes: z.string()
+    .max(500, "Notes must be less than 500 characters")
+    .optional(),
 })
 
 interface BookingFormProps {
@@ -33,13 +47,18 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
       phone: "",
       notes: "",
     },
+    mode: "onChange",
   })
+
+  const { formState: { errors, isValid, isSubmitting } } = form;
+
+  const hasErrors = Object.keys(errors).length > 0;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="container"
+      className="container max-w-screen"
     >
       <Card className="p-6 md:p-8 shadow-xl bg-gradient-to-br from-background to-muted/20">
         <motion.div
@@ -51,9 +70,24 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
             Almost There!
           </h2>
           <p className="text-xl text-muted-foreground">
-            Just a few details to complete your booking
+            Please provide your contact details
           </p>
         </motion.div>
+
+        {hasErrors && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Please fix the errors below to continue
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 md:space-y-8">
@@ -74,8 +108,18 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
                         Full Name
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} className="text-lg py-3 md:py-4" />
+                        <Input 
+                          placeholder="John Doe" 
+                          {...field} 
+                          className={cn(
+                            "text-lg py-3 md:py-4",
+                            errors.name && "border-destructive focus-visible:ring-destructive"
+                          )}
+                        />
                       </FormControl>
+                      <FormDescription>
+                        Enter your full name as it appears on official documents
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -99,8 +143,19 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
                         Email
                       </FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="john@example.com" {...field} className="text-lg py-3 md:py-4" />
+                        <Input 
+                          type="email" 
+                          placeholder="john@example.com" 
+                          {...field} 
+                          className={cn(
+                            "text-lg py-3 md:py-4",
+                            errors.email && "border-destructive focus-visible:ring-destructive"
+                          )}
+                        />
                       </FormControl>
+                      <FormDescription>
+                        We&apos;ll send booking confirmation to this email
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -116,8 +171,19 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
                         Phone Number
                       </FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="(555) 123-4567" {...field} className="text-lg py-3 md:py-4" />
+                        <Input 
+                          type="tel" 
+                          placeholder="(555) 123-4567" 
+                          {...field} 
+                          className={cn(
+                            "text-lg py-3 md:py-4",
+                            errors.phone && "border-destructive focus-visible:ring-destructive"
+                          )}
+                        />
                       </FormControl>
+                      <FormDescription>
+                        For booking updates and notifications
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -143,9 +209,15 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
                         <Textarea
                           placeholder="Any special requests or information..."
                           {...field}
-                          className="text-lg py-3 min-h-[120px]"
+                          className={cn(
+                            "text-lg py-3 min-h-[120px] resize-none",
+                            errors.notes && "border-destructive focus-visible:ring-destructive"
+                          )}
                         />
                       </FormControl>
+                      <FormDescription>
+                        Add any special instructions or requests for your booking
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -159,13 +231,26 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
               transition={{ delay: 0.4 }}
               className="flex justify-center gap-6 pt-6"
             >
-              <Button type="button" variant="outline" onClick={onBack} size="lg" className="text-lg px-8 py-6">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onBack} 
+                size="lg" 
+                className="text-lg px-8 py-6"
+              >
                 Back
               </Button>
               <Button
                 type="submit"
                 size="lg"
-                className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300"
+                disabled={!isValid || isSubmitting}
+                className={cn(
+                  "text-lg px-8 py-6",
+                  "bg-gradient-to-r from-primary to-primary/80",
+                  "hover:from-primary/90 hover:to-primary/70",
+                  "transition-all duration-300",
+                  !isValid && "opacity-50 cursor-not-allowed"
+                )}
               >
                 Continue
               </Button>
@@ -174,6 +259,6 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
         </Form>
       </Card>
     </motion.div>
-  )
+  );
 }
 

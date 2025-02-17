@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable jsx-a11y/alt-text */
-"use client"
+"use client";
 
-import { useCallback, useEffect, useState } from "react"
-import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useCallback, useEffect, useState } from "react";
+import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Bold,
   Italic,
@@ -31,19 +37,23 @@ import {
   Subscript,
   Highlighter,
   CheckSquare,
-} from "lucide-react"
-import { extensions } from "./extensions"
+} from "lucide-react";
+import { extensions } from "./extensions";
 
 interface RichTextEditorProps {
-  content: string
-  onChange: (value: string) => void
-  dir?: "ltr" | "rtl"
-  placeholder?: string
+  content: string;
+  onChange: (value: string) => void;
+  dir?: "ltr" | "rtl";
+  placeholder?: string;
 }
 
-export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEditorProps) {
-  const [showImageDialog, setShowImageDialog] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
+export function RichTextEditor({
+  content,
+  onChange,
+  dir = "ltr",
+}: RichTextEditorProps) {
+  const [showImageDialog, setShowImageDialog] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const editor = useEditor({
     extensions,
@@ -55,160 +65,244 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
         spellcheck: "false",
       },
     },
-    onUpdate: useCallback(({ editor }: {editor : any}) => {
-      const timeout = setTimeout(() => {
-        if (editor) {
-          onChange(editor.getHTML())
-        }
-      }, 500)
-      return () => clearTimeout(timeout)
-    }, [onChange]),
-  })
+    onUpdate: useCallback(
+      ({ editor }: { editor: any }) => {
+        const timeout = setTimeout(() => {
+          if (editor) {
+            onChange(editor.getHTML());
+          }
+        }, 500);
+        return () => clearTimeout(timeout);
+      },
+      [onChange]
+    ),
+  });
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content)
+      editor.commands.setContent(content);
     }
-  }, [content, editor])
+  }, [content, editor]);
 
   const setLink = useCallback(() => {
-    const previousUrl = editor?.getAttributes("link").href
-    const url = window.prompt("URL", previousUrl)
+    const previousUrl = editor?.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
 
     if (url === null) {
-      return
+      return;
     }
 
     if (url === "") {
-      editor?.chain().focus().extendMarkRange("link").unsetLink().run()
-      return
+      editor?.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
     }
 
-    editor?.chain().focus().extendMarkRange("link").setLink({ href: url }).run()
-  }, [editor])
+    editor
+      ?.chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: url })
+      .run();
+  }, [editor]);
 
   const toggleHeading = useCallback(
     (level: 1 | 2 | 3 | 4 | 5 | 6) => {
-      editor?.chain().focus().toggleHeading({ level }).run()
+      editor?.chain().focus().toggleHeading({ level }).run();
     },
-    [editor],
-  )
+    [editor]
+  );
 
   if (!editor || !isMounted) {
-    return null
+    return null;
   }
 
   return (
     <div className="border rounded-lg overflow-hidden bg-background">
       <div className="border-b p-2 flex flex-wrap gap-2">
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("bold") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleBold().run();
+          }}
         >
           <Bold className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("italic") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleItalic().run();
+          }}
         >
           <Italic className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("underline") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleUnderline().run();
+          }}
         >
           <Underline className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("strike") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleStrike().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleStrike().run();
+          }}
         >
           <Strikethrough className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive("heading", { level: 1 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(1)}
+          variant={
+            editor.isActive("heading", { level: 1 }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            toggleHeading(1);
+          }}
         >
           <Heading1 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive("heading", { level: 2 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(2)}
+          variant={
+            editor.isActive("heading", { level: 2 }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            toggleHeading(2);
+          }}
         >
           <Heading2 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive("heading", { level: 3 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(3)}
+          variant={
+            editor.isActive("heading", { level: 3 }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            toggleHeading(3);
+          }}
         >
           <Heading3 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive("heading", { level: 4 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(4)}
+          variant={
+            editor.isActive("heading", { level: 4 }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            toggleHeading(4);
+          }}
         >
           <Heading4 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive("heading", { level: 5 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(5)}
+          variant={
+            editor.isActive("heading", { level: 5 }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            toggleHeading(5);
+          }}
         >
           <Heading5 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive("heading", { level: 6 }) ? "default" : "outline"}
-          onClick={() => toggleHeading(6)}
+          variant={
+            editor.isActive("heading", { level: 6 }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            toggleHeading(6);
+          }}
         >
           <Heading6 className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("bulletList") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleBulletList().run();
+          }}
         >
           <List className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("orderedList") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleOrderedList().run();
+          }}
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("taskList") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleTaskList().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleTaskList().run();
+          }}
         >
           <CheckSquare className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("code") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleCode().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleCode().run();
+          }}
         >
           <Code className="h-4 w-4" />
         </Button>
-        <Button size="sm" variant={editor.isActive("link") ? "default" : "outline"} onClick={setLink}>
+        <Button
+          type="button"
+          size="sm"
+          variant={editor.isActive("link") ? "default" : "outline"}
+          onClick={(e) => {
+            e.preventDefault();
+            setLink();
+          }}
+        >
           <Link className="h-4 w-4" />
         </Button>
         <Dialog open={showImageDialog} onOpenChange={setShowImageDialog}>
           <DialogTrigger asChild>
-            <Button size="sm" variant="outline">
+            <Button type="button" size="sm" variant="outline">
               <Image className="h-4 w-4" />
             </Button>
           </DialogTrigger>
@@ -219,63 +313,103 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
           </DialogContent>
         </Dialog>
         <Button
+          type="button"
           size="sm"
           variant="outline"
-          onClick={() => {
-            const url = prompt("Enter YouTube URL")
+          onClick={(e) => {
+            e.preventDefault();
+            const url = prompt("Enter YouTube URL");
             if (url) {
-              editor.chain().focus().setYoutubeVideo({ src: url }).run()
+              editor.chain().focus().setYoutubeVideo({ src: url }).run();
             }
           }}
         >
           <Youtube className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive({ textAlign: "left" }) ? "default" : "outline"}
-          onClick={() => editor.chain().focus().setTextAlign("left").run()}
+          variant={
+            editor.isActive({ textAlign: "left" }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().setTextAlign("left").run();
+          }}
         >
           <AlignLeft className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive({ textAlign: "center" }) ? "default" : "outline"}
-          onClick={() => editor.chain().focus().setTextAlign("center").run()}
+          variant={
+            editor.isActive({ textAlign: "center" }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().setTextAlign("center").run();
+          }}
         >
           <AlignCenter className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
-          variant={editor.isActive({ textAlign: "right" }) ? "default" : "outline"}
-          onClick={() => editor.chain().focus().setTextAlign("right").run()}
+          variant={
+            editor.isActive({ textAlign: "right" }) ? "default" : "outline"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().setTextAlign("right").run();
+          }}
         >
           <AlignRight className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("superscript") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleSuperscript().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleSuperscript().run();
+          }}
         >
           <Superscript className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("subscript") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleSubscript().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleSubscript().run();
+          }}
         >
           <Subscript className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant={editor.isActive("highlight") ? "default" : "outline"}
-          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().toggleHighlight().run();
+          }}
         >
           <Highlighter className="h-4 w-4" />
         </Button>
         <Button
+          type="button"
           size="sm"
           variant="outline"
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={(e) => {
+            e.preventDefault();
+            editor
+              .chain()
+              .focus()
+              .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+              .run();
+          }}
         >
           <Table className="h-4 w-4" />
         </Button>
@@ -284,41 +418,57 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
       <EditorContent editor={editor} className="p-4" />
 
       {editor && isMounted && (
-        <BubbleMenu 
-          editor={editor} 
+        <BubbleMenu
+          editor={editor}
           tippyOptions={{ duration: 100 }}
           shouldShow={({ editor }) => {
-            return !editor.state.selection.empty
+            return !editor.state.selection.empty;
           }}
         >
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("bold") ? "default" : "outline"}
-            onClick={() => editor.chain().focus().toggleBold().run()}
+            onClick={(e) => {
+              e.preventDefault();
+              editor.chain().focus().toggleBold().run();
+            }}
             className="rounded-none"
           >
             <Bold className="h-4 w-4" />
           </Button>
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("italic") ? "default" : "outline"}
-            onClick={() => editor.chain().focus().toggleItalic().run()}
+            onClick={(e) => {
+              e.preventDefault();
+              editor.chain().focus().toggleItalic().run();
+            }}
             className="rounded-none"
           >
             <Italic className="h-4 w-4" />
           </Button>
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("strike") ? "default" : "outline"}
-            onClick={() => editor.chain().focus().toggleStrike().run()}
+            onClick={(e) => {
+              e.preventDefault();
+              editor.chain().focus().toggleStrike().run();
+            }}
             className="rounded-none"
           >
             <Strikethrough className="h-4 w-4" />
           </Button>
           <Button
+            type="button"
             size="sm"
             variant={editor.isActive("link") ? "default" : "outline"}
-            onClick={setLink}
+            onClick={(e) => {
+              e.preventDefault();
+              setLink();
+            }}
             className="rounded-none"
           >
             <Link className="h-4 w-4" />
@@ -326,5 +476,5 @@ export function RichTextEditor({ content, onChange, dir = "ltr" }: RichTextEdito
         </BubbleMenu>
       )}
     </div>
-  )
+  );
 }

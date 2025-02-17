@@ -8,6 +8,7 @@ import {
   Plus,
   Book,
   Package,
+  X,
 } from "lucide-react";
 
 import { Home } from "lucide-react";
@@ -106,6 +107,9 @@ export default function Sidebar() {
                   </NavItem>
                   <NavItem href="/admin/time-slots" icon={Clock}>
                     Time-slots
+                  </NavItem>
+                  <NavItem href="/admin/blocked-times" icon={X}>
+                   Blocked-times
                   </NavItem>
                 </div>
               </div>

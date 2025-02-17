@@ -7,7 +7,22 @@ import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Package } from '@/types/package'
+import { Package as PrismaPackage, VehicleType } from '@prisma/client';  // Import from @prisma/client instead
+
+interface Package extends PrismaPackage {
+  subPackages?: {
+    id?: string;
+    name: string;
+    description: string;
+    duration: number;
+    prices: {
+      id?: string;
+      vehicleType: VehicleType;
+      price: number;
+    }[];
+    image?: string;
+  }[];
+}
 import { useRouter } from 'next/navigation'
 import { RichTextEditor } from '@/components/front/Editor/RichTextEditor'
 import { ImageUpload } from '@/lib/ImageUpload'
@@ -17,7 +32,9 @@ import { Switch } from "@/components/ui/switch" // Add this import
 
 const priceSchema = z.object({
   id: z.string().optional(),
-  vehicleType: z.string().min(1, 'Vehicle type is required'),
+  vehicleType: z.nativeEnum(VehicleType, {
+    errorMap: () => ({ message: 'Please select a vehicle type' }),
+  }),
   price: z.number().min(0, 'Price must be a positive number'),
 })
 
@@ -34,6 +51,7 @@ const packageSchema = z.object({
   name: z.string().min(1, 'Package name is required'),
   image: z.string().optional(),
   featured: z.boolean().default(false), // Add featured field
+  basePrice: z.number().min(0, 'Base price must be a positive number'),
   subPackages: z.array(subPackageSchema).min(1, 'At least one sub package is required'),
 })
 
@@ -45,11 +63,24 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
 
   const form = useForm<PackageFormValues>({
     resolver: zodResolver(packageSchema),
-    defaultValues: initialData || {
+    defaultValues: initialData ? {
+      name: initialData.name,
+      image: initialData.image || undefined,
+      featured: initialData.featured,
+      basePrice: initialData.basePrice,
+      subPackages: initialData.subPackages || [{
+        name: '',
+        description: '',
+        duration: 0,
+        prices: [{ vehicleType: VehicleType.SEDAN, price: 0 }],
+        image: ''
+      }],
+    } : {
       name: '',
       image: '',
-      featured: false, // Add default value
-      subPackages: [{ name: '', description: '', duration: 0, prices: [{ vehicleType: '', price: 0 }], image: '' }],
+      featured: false,
+      basePrice: 0,
+      subPackages: [{ name: '', description: '', duration: 0, prices: [{ vehicleType: VehicleType.SEDAN, price: 0 }], image: '' }],
     },
   })
 
@@ -94,6 +125,27 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                   <FormLabel className="text-lg font-medium dark:text-gray-100">Package Name</FormLabel>
                   <FormControl>
                     <Input {...field} className="w-full dark:bg-[#0F0F12] dark:text-white" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Add base price field after name field */}
+            <FormField
+              control={form.control}
+              name="basePrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-lg font-medium dark:text-gray-100">Base Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      {...field}
+                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      className="w-full dark:bg-[#0F0F12] dark:text-white"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,7 +203,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                   name: '',
                   description: '',
                   duration: 0,
-                  prices: [{ vehicleType: '', price: 0 }],
+                  prices: [{ vehicleType: VehicleType.SEDAN, price: 0 }],
                   image: ''
                 })}
                 className="flex items-center gap-2"
@@ -298,6 +350,10 @@ function PriceFields({ control, subPackageIndex }: { control: Control<PackageFor
     name: `subPackages.${subPackageIndex}.prices`,
   });
 
+  const appendEmptyPrice = () => {
+    appendPrice({ vehicleType: VehicleType.SEDAN, price: 0 });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -306,7 +362,7 @@ function PriceFields({ control, subPackageIndex }: { control: Control<PackageFor
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => appendPrice({ vehicleType: '', price: 0 })}
+          onClick={appendEmptyPrice}
           className="flex items-center gap-2"
         >
           <Plus className="w-4 h-4" /> Add Price
@@ -339,7 +395,17 @@ function PriceFields({ control, subPackageIndex }: { control: Control<PackageFor
                   <FormItem>
                     <FormLabel className="dark:text-gray-200">Vehicle Type</FormLabel>
                     <FormControl>
-                      <Input {...field} className="bg-white dark:bg-[#0F0F12] dark:text-white" />
+                      <select
+                        {...field}
+                        className="w-full p-2 border rounded-md dark:bg-[#0F0F12] dark:text-white"
+                      >
+                        <option value="">Select vehicle type</option>
+                        {Object.values(VehicleType).map((type) => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -41,24 +41,45 @@ export async function deleteTimeSlot(id: string) {
 }
 
 export async function getAvailableTimeSlots(date: Date) {
-  const bookings = await db.booking.findMany({
-    where: {
-      date: date,
-    },
-    select: {
-      time: true
-    }
-  });
+  const [bookings, blockedTimes] = await Promise.all([
+    db.booking.findMany({
+      where: { date },
+      select: { time: true }
+    }),
+    db.blockedTime.findMany({
+      where: {
+        OR: [
+          { date }, 
+          { 
+            isFullDay: true,
+            date: {
+              equals: date
+            }
+          }
+        ]
+      }
+    })
+  ]);
 
   const bookedTimes = new Set(bookings.map(b => b.time));
-  
   const timeSlots = [];
+
   for (let hour = 0; hour < 24; hour++) {
     for (const minute of [0, 30]) {
       const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      
+      // Check if time is blocked
+      const isBlocked = blockedTimes.some(bt => {
+        if (bt.isFullDay) return true;
+        if (bt.startTime && bt.endTime) {
+          return time >= bt.startTime && time <= bt.endTime;
+        }
+        return false;
+      });
+
       timeSlots.push({
         startTime: time,
-        isBooked: bookedTimes.has(time)
+        isBooked: bookedTimes.has(time) || isBlocked
       });
     }
   }

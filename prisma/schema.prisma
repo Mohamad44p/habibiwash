@@ -9,11 +9,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum VehicleType {
+  SEDAN
+  SUV
+  VAN
+}
+
 model Package {
   id          String       @id @default(cuid())
   name        String
   image       String?
   featured    Boolean      @default(false) // Add featured field
+  basePrice   Float        @default(0) // Add base price
   subPackages SubPackage[]
   addOns      AddOn[]     @relation("PackageAddOns") // Add this line
   createdAt   DateTime     @default(now())
@@ -35,8 +42,8 @@ model SubPackage {
 }
 
 model Price {
-  id           String     @id @default(cuid())
-  vehicleType  String
+  id           String      @id @default(cuid())
+  vehicleType  VehicleType // Change to enum
   price        Float
   subPackageId String
   subPackage   SubPackage @relation(fields: [subPackageId], references: [id], onDelete: Cascade)
@@ -87,6 +94,17 @@ model TimeSlot {
   Booking   Booking[]
 
   @@unique([date, startTime]) 
+}
+
+model BlockedTime {
+  id        String   @id @default(cuid())
+  date      DateTime?
+  startTime String?
+  endTime   String?
+  isFullDay Boolean  @default(false)
+  reason    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum BookingStatus {

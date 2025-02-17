@@ -1,7 +1,7 @@
-import { ArrowRight, Shield, Clock, Award } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import Link from "next/link"
+import { ArrowRight, Shield, Clock, Award } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -21,17 +21,16 @@ export default function Hero() {
                   </span>
                 </h1>
                 <p className="text-lg sm:text-xl text-muted-foreground sm:leading-8">
-                  Experience premium car washing services with HabibiWash. Book your appointment today and give your
-                  vehicle the shine it deserves.
+                  Experience premium car washing services with HabibiWash. Book
+                  your appointment today and give your vehicle the shine it
+                  deserves.
                 </p>
               </div>
               <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/booking"
-                >
-                <Button size="lg" className="gap-2">
-                  Book Now <ArrowRight className="h-4 w-4" />
-                </Button>
+                <Link href="/booking">
+                  <Button size="lg" className="gap-2">
+                    Book Now <ArrowRight className="h-4 w-4" />
+                  </Button>
                 </Link>
                 <Button size="lg" variant="outline">
                   Our Services
@@ -41,17 +40,23 @@ export default function Hero() {
                 <div className="space-y-2 text-center">
                   <Shield className="h-8 w-8 mx-auto text-primary" />
                   <h4 className="font-semibold">Premium Quality</h4>
-                  <p className="text-sm text-muted-foreground">Top-notch service</p>
+                  <p className="text-sm text-muted-foreground">
+                    Top-notch service
+                  </p>
                 </div>
                 <div className="space-y-2 text-center">
                   <Clock className="h-8 w-8 mx-auto text-primary" />
                   <h4 className="font-semibold">Quick Service</h4>
-                  <p className="text-sm text-muted-foreground">Save your time</p>
+                  <p className="text-sm text-muted-foreground">
+                    Save your time
+                  </p>
                 </div>
                 <div className="space-y-2 text-center">
                   <Award className="h-8 w-8 mx-auto text-primary" />
                   <h4 className="font-semibold">Satisfaction</h4>
-                  <p className="text-sm text-muted-foreground">Guaranteed results</p>
+                  <p className="text-sm text-muted-foreground">
+                    Guaranteed results
+                  </p>
                 </div>
               </div>
             </div>
@@ -80,11 +85,15 @@ export default function Hero() {
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <h3 className="font-semibold">Quick Booking</h3>
-                      <p className="text-sm text-muted-foreground">Schedule your car wash in seconds</p>
+                      <p className="text-sm text-muted-foreground">
+                        Schedule your car wash in seconds
+                      </p>
                     </div>
-                    <Button variant="outline" size="sm">
-                      Book Now
-                    </Button>
+                    <Link href="/booking">
+                      <Button variant="outline" size="sm">
+                        Book Now
+                      </Button>
+                    </Link>
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
@@ -107,6 +116,5 @@ export default function Hero() {
         </section>
       </main>
     </div>
-  )
+  );
 }
-

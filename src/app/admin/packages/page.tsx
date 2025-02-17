@@ -8,7 +8,7 @@ export default async function PackagesPage() {
   const packages = await getPackages();
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10" suppressHydrationWarning>
       <h1 className="text-2xl font-bold mb-5">Car Washing Packages</h1>
       <Link href="/admin/packages/create">
         <Button>Create New Package</Button>

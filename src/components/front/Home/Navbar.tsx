@@ -33,7 +33,7 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-background/95 backdrop-blur-md shadow-md"
-          : "bg-transparent"
+          : "bg-background/5 backdrop-blur-2xl"
       }`}
     >
       <nav className="container mx-auto px-4 py-4">
@@ -60,7 +60,9 @@ export default function Navbar() {
           </div>
           <div className="hidden lg:flex items-center space-x-4">
             <ThemeToggle />
-            <Button size="sm">Schedule Online</Button>
+            <Link href="/booking">
+              <Button size="sm">Schedule Online</Button>
+            </Link>
           </div>
           <div className="lg:hidden">
             <Button
@@ -88,9 +90,11 @@ export default function Navbar() {
               </Link>
             ))}
             <ThemeToggle />
-            <Button size="sm" className="w-full">
-              Schedule Online
-            </Button>
+            <Link href="/booking">
+              <Button size="sm" className="w-full">
+                Schedule Online
+              </Button>
+            </Link>
           </div>
         )}
       </nav>

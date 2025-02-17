@@ -41,6 +41,7 @@ export async function createPackage(data: Package) {
         name: data.name,
         image: data.image ?? null,
         featured: data.featured ?? false,
+        basePrice: data.basePrice,
         subPackages: {
           create: data.subPackages.map((subPackage) => ({
             name: subPackage.name,
@@ -79,6 +80,7 @@ export async function updatePackage(id: string, data: Package) {
         name: data.name,
         image: data.image ?? null,
         featured: data.featured ?? false,
+        basePrice: data.basePrice,
         subPackages: {
           create: data.subPackages.map((subPackage) => ({
             name: subPackage.name,

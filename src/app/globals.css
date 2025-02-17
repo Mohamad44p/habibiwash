@@ -134,3 +134,49 @@ button, [type='button'], [type='submit'] {
     transform: rotate(360deg);
   }
 }
+
+@keyframes scale-up {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-scale-up {
+  animation: scale-up 0.2s ease-out forwards;
+}
+
+@keyframes calendar-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.calendar-appear {
+  animation: calendar-in 0.2s ease-out;
+}
+
+/* Improve time slot hover effect */
+.time-slot-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.time-slot-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, transparent, var(--primary-10), transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.time-slot-hover:hover::after {
+  opacity: 1;
+}
