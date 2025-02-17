@@ -19,12 +19,21 @@ export type SubPackage = {
   image?: string; // Add image field
 };
 
+export type AddOn = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  icon: string;
+};
+
 export type Package = {
   id?: string;
   name: string;
   image?: string;
   featured?: boolean; // Add featured field
   subPackages: SubPackage[];
+  addOns?: AddOn[]; // Make addOns optional
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -50,12 +59,21 @@ type PrismaSubPackage = {
   image: string | null; // Add image field
 };
 
+type PrismaAddOn = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  icon: string;
+};
+
 type PrismaPackage = {
   id: string;
   name: string;
   image: string | null;
   featured: boolean; // Add featured field
   subPackages: PrismaSubPackage[];
+  addOns: PrismaAddOn[]; // Add addOns field
   createdAt: Date;
   updatedAt: Date;
 };
@@ -80,7 +98,7 @@ export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
     id: prismaPackage.id,
     name: prismaPackage.name,
     image: prismaPackage.image ?? undefined,
-    featured: prismaPackage.featured, // Add featured field
+    featured: prismaPackage.featured,
     subPackages: prismaPackage.subPackages.map((subPackage) => ({
       id: subPackage.id,
       name: subPackage.name,
@@ -99,6 +117,13 @@ export function normalizePrismaPackage(prismaPackage: PrismaPackage): Package {
       updatedAt: subPackage.updatedAt,
       image: subPackage.image ?? undefined, // Add image field
     })),
+    addOns: prismaPackage.addOns.map((addOn) => ({
+      id: addOn.id,
+      name: addOn.name,
+      description: addOn.description,
+      price: addOn.price,
+      icon: addOn.icon,
+    })), 
     createdAt: prismaPackage.createdAt,
     updatedAt: prismaPackage.updatedAt,
   };

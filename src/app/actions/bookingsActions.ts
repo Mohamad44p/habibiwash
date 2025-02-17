@@ -6,19 +6,13 @@ import {
   BookingStatus,
   normalizeBooking,
   PrismaBooking,
+  AddOn
 } from "@/types/booking";
 import db from "../db/db";
 
 type PrismaBookingResult = Omit<PrismaBooking, "addOns"> & {
-  addOns: { id: string }[];
+  addOns: AddOn[];
 };
-
-function transformBooking(booking: PrismaBookingResult) {
-  return {
-    ...booking,
-    addOns: booking.addOns.map((addon) => addon.id),
-  };
-}
 
 export async function getBookings(): Promise<Booking[]> {
   const bookings = await db.booking.findMany({
@@ -37,12 +31,15 @@ export async function getBookings(): Promise<Booking[]> {
       addOns: {
         select: {
           id: true,
+          name: true,
+          price: true,
+          icon: true,
         },
       },
     },
   });
 
-  return bookings.map((booking) => normalizeBooking(transformBooking(booking)));
+  return bookings.map((booking) => normalizeBooking(booking as PrismaBookingResult));
 }
 
 export async function getBooking(id: string): Promise<Booking | null> {
@@ -63,13 +60,24 @@ export async function getBooking(id: string): Promise<Booking | null> {
       addOns: {
         select: {
           id: true,
+          name: true,
+          price: true,
+          icon: true,
         },
       },
     },
   });
 
   if (!booking) return null;
-  return normalizeBooking(transformBooking(booking));
+  return normalizeBooking({
+    ...booking,
+    addOns: booking.addOns.map((addon) => ({
+      id: addon.id,
+      name: addon.name,
+      price: addon.price,
+      icon: addon.icon,
+    })),
+  });
 }
 
 export async function updateBookingStatus(id: string, status: BookingStatus) {
@@ -91,11 +99,14 @@ export async function updateBookingStatus(id: string, status: BookingStatus) {
       addOns: {
         select: {
           id: true,
+          name: true,
+          price: true,
+          icon: true,
         },
       },
     },
   });
 
   revalidatePath("/admin/bookings");
-  return normalizeBooking(transformBooking(result));
+  return normalizeBooking(result as PrismaBookingResult);
 }

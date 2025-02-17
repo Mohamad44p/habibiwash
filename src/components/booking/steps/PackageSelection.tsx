@@ -1,105 +1,120 @@
-"use client"
+"use client";
 
-import { motion } from "motion/react"
-import type { Package } from "@/types/package"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Check } from "lucide-react"
-import Image from "next/image"
+import { motion } from "motion/react";
+import type { Package } from "@/types/package";
+import { Card } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { SparklesIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useMemo } from "react";
+import Image from "next/image";
 
 interface PackageSelectionProps {
-  packages: Package[]
-  selected?: Package
-  onSelect: (pkg: Package, subPkg: string) => void
+  packages: Package[];
+  selected?: Package;
+  onSelect: (pkg: Package, subPkg: string) => void;
 }
 
-export default function PackageSelection({ packages, selected, onSelect }: PackageSelectionProps) {
+export default function PackageSelection({
+  packages,
+  selected,
+  onSelect,
+}: PackageSelectionProps) {
+  // Memoize packages
+  const memoizedPackages = useMemo(() => packages, [packages]);
+
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Choose Your Package</h1>
-        <p className="text-xl text-muted-foreground">Select the perfect wash package for your vehicle</p>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="container space-y-8"
+    >
+      <div className="text-center space-y-4">
+        <motion.h1
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
+        >
+          Choose Your Perfect Package
+        </motion.h1>
+        <motion.p
+          initial={{ y: -10 }}
+          animate={{ y: 0 }}
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+        >
+          Select from our carefully curated washing packages
+        </motion.p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {packages.map((pkg) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {memoizedPackages.map((pkg) => (
           <motion.div
             key={pkg.id}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.03 }}
-            transition={{ duration: 0.2 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: { delay: 0.1 },
+            }}
+            whileHover={{ scale: 1.02 }}
           >
             <Card
-              className={`p-8 cursor-pointer relative overflow-hidden transition-all duration-300 ${
-                selected?.id === pkg.id
-                  ? "border-2 border-primary shadow-xl transform scale-[1.02] bg-primary/5"
-                  : "hover:shadow-lg hover:border-primary/50 hover:scale-[1.01]"
-              }`}
-            >
-              {pkg.featured && (
-                <div className="absolute -right-12 top-8 rotate-45 bg-gradient-to-r from-yellow-500 to-amber-500 px-14 py-2 text-white font-semibold shadow-lg">
-                  Featured
-                </div>
+              className={cn(
+                "relative overflow-hidden group cursor-pointer transition-all duration-300",
+                "hover:shadow-2xl hover:shadow-primary/20",
+                selected?.id === pkg.id && "ring-2 ring-primary"
               )}
-
-              <div className="relative rounded-xl overflow-hidden mb-6 group">
+            >
+              <div className="relative h-32 md:h-48 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                 <Image
-                  src={pkg.image || "/placeholder.jpg"}
+                  src={pkg.image ?? "/Logo1.png"}
                   alt={pkg.name}
-                  width={400}
-                  height={250}
-                  className="w-full h-64 object-cover transform transition-transform group-hover:scale-110"
+                  width={500}
+                  height={500}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                 />
-                {selected?.id === pkg.id && (
-                  <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="bg-white rounded-full p-3"
-                    >
-                      <Check className="w-8 h-8 text-primary" />
-                    </motion.div>
-                  </div>
+                {pkg.featured && (
+                  <Badge className="absolute top-2 md:top-4 right-2 md:right-4 z-20 bg-primary">
+                    <SparklesIcon className="w-4 h-4 mr-1" />
+                    Featured
+                  </Badge>
                 )}
               </div>
 
-              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                {pkg.name}
-              </h3>
-
-              <div className="space-y-4">
-                {pkg.subPackages.map((subPkg) => (
-                  <Button
-                    key={subPkg.id}
-                    variant={
-                      selected?.id === pkg.id && selected?.subPackages.some((sp) => sp.id === subPkg.id)
-                        ? "default"
-                        : "outline"
-                    }
-                    className="w-full justify-between text-lg py-6"
-                    onClick={() => onSelect(pkg, subPkg.id ?? "")}
-                  >
-                    <span>{subPkg.name}</span>
-                    <span className="font-bold text-xl">${subPkg.prices[0].price}</span>
-                  </Button>
-                ))}
+              {/* Content section */}
+              <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-bold">{pkg.name}</h3>
+                </div>
+                <div className="space-y-2 md:space-y-3">
+                  {pkg.subPackages.map((subPkg) => (
+                    <motion.div key={`${pkg.id}-${subPkg.id}`} whileTap={{ scale: 0.98 }}>
+                      <a
+                        className={cn(
+                          buttonVariants({
+                            variant:
+                              selected?.id === pkg.id ? "default" : "outline",
+                          }),
+                          "w-full justify-between group relative overflow-hidden text-lg md:text-xl py-3 md:py-4"
+                        )}
+                        onClick={() => onSelect(pkg, subPkg.id ?? "")}
+                      >
+                        <span>{subPkg.name}</span>
+                        <span className="font-bold text-xl">
+                          ${subPkg.prices[0].price}
+                        </span>
+                        <div className="absolute inset-0 bg-primary/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+                      </a>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-
-              {selected?.id === pkg.id && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-4 left-4 bg-primary text-white p-2 rounded-full"
-                >
-                  <Check className="w-6 h-6" />
-                </motion.div>
-              )}
             </Card>
           </motion.div>
         ))}
       </div>
-    </div>
-  )
+    </motion.div>
+  );
 }
-

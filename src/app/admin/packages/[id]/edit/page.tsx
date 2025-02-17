@@ -17,6 +17,7 @@ export default async function EditPackagePage(
           prices: true,
         },
       },
+      addOns: true,
     },
   });
 

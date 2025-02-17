@@ -13,7 +13,6 @@ const navItems = [
   { name: "Ceramic Coating", href: "/ceramic-coating" },
   { name: "Car Detailing", href: "/car-detailing" },
   { name: "Get a Quote", href: "/quote" },
-  { name: "Blog", href: "/blog" },
   { name: "FAQ", href: "/faq" },
 ];
 

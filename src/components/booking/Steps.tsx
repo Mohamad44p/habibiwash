@@ -1,58 +1,71 @@
-"use client";
+"use client"
 
-import { motion } from "motion/react";
-import { Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { motion } from "motion/react"
+import { Check } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useMemo } from "react"
 
 interface StepProps {
-  currentStep: number;
+  currentStep: number
   steps: Array<{
-    title: string;
-    completed: boolean;
-  }>;
-  onStepClick?: (step: number) => void;
+    title: string
+    completed: boolean
+  }>
+  onStepClick?: (step: number) => void
+  className?: string
 }
 
-export function Steps({ currentStep, steps, onStepClick }: StepProps) {
+export function Steps({ currentStep, steps, onStepClick, className }: StepProps) {
+  // Memoize steps
+  const memoizedSteps = useMemo(() => steps, [steps])
+
   return (
-    <div className="max-w-4xl mx-auto mb-12 px-4">
+    <nav 
+      className={cn("max-w-full md:max-w-4xl mx-auto", className)}
+      aria-label="Booking progress"
+    >
       <div className="relative flex justify-between items-center">
         {/* Background line */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-muted rounded-full" />
 
-        {/* Progress line */}
+        {/* Animated progress line */}
         <motion.div
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary rounded-full"
-          initial={{ width: "0%" }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-primary to-primary/80 rounded-full"
+          initial={false}
           animate={{
-            width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+            width: `${((currentStep - 1) / (memoizedSteps.length - 1)) * 100}%`,
           }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          transition={{ duration: 0.3 }}
         />
 
-        {steps.map((step, index) => (
-          <div
+        {memoizedSteps.map((step, index) => (
+          <motion.button
             key={index}
+            type="button"
+            disabled={!step.completed && index + 1 !== currentStep}
+            onClick={() => onStepClick?.(index + 1)}
             className={cn(
               "relative flex flex-col items-center",
-              onStepClick && step.completed && "cursor-pointer"
+              (step.completed || index + 1 === currentStep) && "cursor-pointer",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full"
             )}
-            onClick={() => onStepClick && step.completed && onStepClick(index + 1)}
+            whileHover={step.completed ? { scale: 1.05 } : undefined}
+            whileTap={step.completed ? { scale: 0.95 } : undefined}
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: 0.1 }}
               className="relative"
             >
               <div
                 className={cn(
-                  "w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10",
+                  "w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10",
                   currentStep > index + 1 || step.completed
                     ? "border-primary bg-primary text-white"
                     : currentStep === index + 1
-                    ? "border-primary bg-white text-primary"
-                    : "border-muted bg-background text-muted-foreground"
+                      ? "border-primary bg-white text-primary"
+                      : "border-muted bg-background text-muted-foreground",
                 )}
               >
                 {step.completed || currentStep > index + 1 ? (
@@ -61,10 +74,10 @@ export function Steps({ currentStep, steps, onStepClick }: StepProps) {
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
-                    <Check className="w-6 h-6" />
+                    <Check className="w-5 h-5 md:w-7 md:h-7" />
                   </motion.div>
                 ) : (
-                  <span className="text-sm font-medium">{index + 1}</span>
+                  <span className="text-sm md:text-lg font-medium">{index + 1}</span>
                 )}
               </div>
 
@@ -76,7 +89,7 @@ export function Steps({ currentStep, steps, onStepClick }: StepProps) {
                   animate={{ opacity: 0, scale: 1.5 }}
                   transition={{
                     duration: 1.5,
-                    repeat: Infinity,
+                    repeat: Number.POSITIVE_INFINITY,
                     ease: "easeOut",
                   }}
                 />
@@ -86,21 +99,22 @@ export function Steps({ currentStep, steps, onStepClick }: StepProps) {
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 + 0.2 }}
+              transition={{ delay: 0.2 }}
               className={cn(
-                "absolute -bottom-8 text-sm font-medium whitespace-nowrap transition-colors duration-300",
+                "absolute -bottom-6 md:-bottom-8 text-xs md:text-sm font-medium whitespace-nowrap transition-colors duration-300",
                 currentStep === index + 1
                   ? "text-primary"
                   : step.completed
-                  ? "text-foreground"
-                  : "text-muted-foreground"
+                    ? "text-foreground"
+                    : "text-muted-foreground",
               )}
             >
               {step.title}
             </motion.span>
-          </div>
+          </motion.button>
         ))}
       </div>
-    </div>
-  );
+    </nav>
+  )
 }
+

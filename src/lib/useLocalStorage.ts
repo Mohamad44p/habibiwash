@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
+  shouldSave: boolean = true // Add shouldSave parameter
 ): [T, (value: T | ((val: T) => T)) => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === "undefined") {
@@ -20,16 +21,18 @@ export function useLocalStorage<T>(
   });
 
   useEffect(() => {
-    try {
-      const valueToStore =
-        typeof storedValue === "function"
-          ? storedValue(storedValue)
-          : storedValue;
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.log(error);
+    if (shouldSave) { // Only save if shouldSave is true
+      try {
+        const valueToStore =
+          typeof storedValue === "function"
+            ? storedValue(storedValue)
+            : storedValue;
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }, [key, storedValue]);
+  }, [key, storedValue, shouldSave]);
 
   return [storedValue, setStoredValue];
 }

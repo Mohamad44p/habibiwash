@@ -1,5 +1,12 @@
 export type BookingStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
+export interface AddOn {
+  id: string;
+  name: string;
+  price: number;
+  icon: string;
+}
+
 export interface Booking {
   id: string;
   packageId: string;
@@ -9,7 +16,7 @@ export interface Booking {
   date: Date;
   timeSlot: { startTime: string; endTime: string };
   timeSlotId: string;
-  addOns: string[];
+  addOns: AddOn[];  // Changed from string[] to AddOn[]
   status: BookingStatus;
   customerName: string;
   customerEmail: string;
@@ -27,7 +34,7 @@ export type PrismaBooking = {
   date: Date;
   time: string;
   timeSlotId: string;
-  addOns?: string[];  // Made optional
+  addOns?: AddOn[];  // Changed from string[] to AddOn[]
   customerName: string;
   customerEmail: string;
   customerPhone: string;

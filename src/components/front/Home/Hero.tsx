@@ -1,6 +1,7 @@
 import { ArrowRight, Shield, Clock, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function Hero() {
   return (
@@ -25,9 +26,13 @@ export default function Hero() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/booking"
+                >
                 <Button size="lg" className="gap-2">
                   Book Now <ArrowRight className="h-4 w-4" />
                 </Button>
+                </Link>
                 <Button size="lg" variant="outline">
                   Our Services
                 </Button>

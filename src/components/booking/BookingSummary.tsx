@@ -6,19 +6,19 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Loader2, CalendarIcon, CarIcon, PackageIcon, SparklesIcon, UserIcon } from 'lucide-react'
 import { format } from "date-fns"
-import type { BookingData } from "../BookingFlow"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { createBooking } from "@/app/actions/bookingActions"
 import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
+import { BookingData } from "./BookingFlow"
 
 interface BookingSummaryProps {
   bookingData: BookingData
   onEdit: (step: number) => void
-  totalPrice: number
+  totalPrice: number;
 }
 
-export default function BookingSummary({ bookingData, onEdit }: BookingSummaryProps) {
+export default function BookingSummary({ bookingData, onEdit, totalPrice }: BookingSummaryProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
@@ -47,6 +47,8 @@ export default function BookingSummary({ bookingData, onEdit }: BookingSummaryPr
     }
   }
 
+  const memoizedBookingData = useMemo(() => bookingData, [bookingData]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -74,68 +76,62 @@ export default function BookingSummary({ bookingData, onEdit }: BookingSummaryPr
       </div>
 
       <Card className="p-6 md:p-8 space-y-6 md:space-y-8 shadow-xl bg-gradient-to-br from-background to-muted/20">
-        <AnimatePresence mode="wait">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">Booking Summary</h2>
+          <div className="text-xl font-bold text-primary">Total: ${totalPrice?.toFixed(2)}</div>
+        </div>
+        <AnimatePresence>
           <SummarySection
-            key="package-section"
             icon={<PackageIcon className="w-5 h-5 md:w-6 md:h-6" />}
             title="Selected Package"
             editStep={1}
             onEdit={onEdit}
           >
-            <div className="font-medium text-lg">{bookingData.selectedPackage?.name}</div>
+            <div className="font-medium text-lg">{memoizedBookingData.selectedPackage?.name}</div>
             <div className="text-muted-foreground">
-              {bookingData.selectedPackage?.subPackages.find((sp) => sp.id === bookingData.selectedSubPackage)?.name}
+              {memoizedBookingData.selectedPackage?.subPackages.find((sp) => sp.id === memoizedBookingData.selectedSubPackage)?.name}
             </div>
           </SummarySection>
 
-          <SummarySection
-            key="vehicle-section"
-            icon={<CarIcon className="w-5 h-5 md:w-6 md:h-6" />}
-            title="Vehicle Type"
-            editStep={2}
-            onEdit={onEdit}
-          >
-            <div className="font-medium text-lg capitalize">{bookingData.vehicleType}</div>
+          <SummarySection icon={<CarIcon className="w-5 h-5 md:w-6 md:h-6" />} title="Vehicle Type" editStep={2} onEdit={onEdit}>
+            <div className="font-medium text-lg capitalize">{memoizedBookingData.vehicleType}</div>
           </SummarySection>
 
           <SummarySection
-            key="time-section"
             icon={<CalendarIcon className="w-5 h-5 md:w-6 md:h-6" />}
             title="Appointment Time"
             editStep={3}
             onEdit={onEdit}
           >
             <div className="font-medium text-lg">
-              {bookingData.selectedDate && format(bookingData.selectedDate, "MMMM d, yyyy")}
+              {memoizedBookingData.selectedDate && format(memoizedBookingData.selectedDate, "MMMM d, yyyy")}
             </div>
-            <div className="text-muted-foreground">{bookingData.selectedTime}</div>
+            <div className="text-muted-foreground">{memoizedBookingData.selectedTime}</div>
           </SummarySection>
 
-          {bookingData.selectedAddOns && bookingData.selectedAddOns.length > 0 && (
+          {memoizedBookingData.selectedAddOns && memoizedBookingData.selectedAddOns.length > 0 && (
             <SummarySection
-              key="addons-section"
               icon={<SparklesIcon className="w-5 h-5 md:w-6 md:h-6" />}
               title="Selected Add-ons"
               editStep={4}
               onEdit={onEdit}
             >
               <div className="text-muted-foreground">
-                {bookingData.selectedAddOns.length} add-on{bookingData.selectedAddOns.length !== 1 ? "s" : ""} selected
+                {memoizedBookingData.selectedAddOns.length} add-on{memoizedBookingData.selectedAddOns.length !== 1 ? "s" : ""} selected
               </div>
             </SummarySection>
           )}
 
           <SummarySection
-            key="contact-section"
             icon={<UserIcon className="w-5 h-5 md:w-6 md:h-6" />}
             title="Contact Information"
             editStep={5}
             onEdit={onEdit}
           >
             <div className="space-y-1">
-              <div className="font-medium text-lg">{bookingData.customerInfo?.name}</div>
-              <div className="text-muted-foreground">{bookingData.customerInfo?.email}</div>
-              <div className="text-muted-foreground">{bookingData.customerInfo?.phone}</div>
+              <div className="font-medium text-lg">{memoizedBookingData.customerInfo?.name}</div>
+              <div className="text-muted-foreground">{memoizedBookingData.customerInfo?.email}</div>
+              <div className="text-muted-foreground">{memoizedBookingData.customerInfo?.phone}</div>
             </div>
           </SummarySection>
         </AnimatePresence>
@@ -181,7 +177,7 @@ interface SummarySectionProps {
 function SummarySection({ icon, title, children, editStep, onEdit }: SummarySectionProps) {
   return (
     <motion.div
-      key={`summary-section-${title}`}  // Add unique key
+      key={`summary-section-${title}`}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}

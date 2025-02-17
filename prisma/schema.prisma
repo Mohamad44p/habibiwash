@@ -15,6 +15,7 @@ model Package {
   image       String?
   featured    Boolean      @default(false) // Add featured field
   subPackages SubPackage[]
+  addOns      AddOn[]     @relation("PackageAddOns") // Add this line
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   Booking     Booking[]
@@ -70,8 +71,9 @@ model AddOn {
   price       Float
   icon        String    // Make sure this line is present
   bookings    Booking[]
+  packages    Package[] @relation("PackageAddOns") // Add this line
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now())
 }
 
 model TimeSlot {

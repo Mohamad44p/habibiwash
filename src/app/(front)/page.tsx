@@ -7,13 +7,11 @@ import WhatWeOffer from "@/components/front/Home/WhatWeOffer"
 export default function Home() {
   return (
     <main className="bg-background text-foreground">
-    
       <Hero />
       <WhatWeOffer/>
       <ServiceTabs/>
       <ServiceAddOns />
       <FAQ />
-
     </main>
   )
 }
