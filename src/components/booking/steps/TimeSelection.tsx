@@ -144,8 +144,15 @@ export default function TimeSelection({ selectedDate, selectedTime, onSelect, on
                   }}
                   components={{
                     DayContent: (props: DayContentProps) => {
-                      const isSelected = props.date.toDateString() === date?.toDateString();
-                      const isToday = props.date.toDateString() === new Date().toDateString();
+                      if (!props.date) return null;
+                      
+                      const currentDate = props.date instanceof Date ? props.date : new Date(props.date);
+                      const selectedDate = date instanceof Date ? date : date ? new Date(date) : null;
+                      const today = new Date();
+                      
+                      const isSelected = selectedDate && 
+                        currentDate.toDateString() === selectedDate.toDateString();
+                      const isToday = currentDate.toDateString() === today.toDateString();
                       
                       return (
                         <div className="relative w-full h-full flex items-center justify-center">
@@ -156,7 +163,7 @@ export default function TimeSelection({ selectedDate, selectedTime, onSelect, on
                             !isSelected && isToday && "bg-accent text-accent-foreground font-medium",
                             !isSelected && "hover:bg-primary/10"
                           )}>
-                            {props.date.getDate()}
+                            {currentDate.getDate()}
                           </span>
                         </div>
                       );

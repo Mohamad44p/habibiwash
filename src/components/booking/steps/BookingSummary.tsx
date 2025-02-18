@@ -4,13 +4,13 @@ import type React from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Loader2, CalendarIcon, CarIcon, PackageIcon, SparklesIcon, UserIcon } from 'lucide-react'
-import { format } from "date-fns"
+import { Loader2, PackageIcon, CarIcon, CalendarIcon, SparklesIcon, UserIcon } from 'lucide-react'
 import type { BookingData } from "../BookingFlow"
 import { useState } from "react"
 import { createBooking } from "@/app/actions/bookingActions"
 import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
+import { format } from "date-fns"
 
 interface BookingSummaryProps {
   bookingData: BookingData
@@ -18,7 +18,7 @@ interface BookingSummaryProps {
   totalPrice: number
 }
 
-export default function BookingSummary({ bookingData, onEdit }: BookingSummaryProps) {
+export default function BookingSummary({ bookingData, onEdit, totalPrice }: BookingSummaryProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
@@ -47,124 +47,151 @@ export default function BookingSummary({ bookingData, onEdit }: BookingSummaryPr
     }
   }
 
+  const sections = [
+    {
+      icon: <PackageIcon className="w-6 h-6" />,
+      title: "Package Details",
+      editStep: 1,
+      content: (
+        <>
+          <div className="font-medium text-lg">{bookingData.selectedPackage?.name}</div>
+          <div className="text-muted-foreground">
+            {bookingData.selectedPackage?.subPackages.find(
+              (sp) => sp.id === bookingData.selectedSubPackage
+            )?.name}
+          </div>
+        </>
+      ),
+    },
+    {
+      icon: <CarIcon className="w-6 h-6" />,
+      title: "Vehicle Type",
+      editStep: 3,
+      content: (
+        <div className="font-medium text-lg capitalize">
+          {bookingData.vehicleType}
+        </div>
+      ),
+    },
+    {
+      icon: <CalendarIcon className="w-6 h-6" />,
+      title: "Appointment Time",
+      editStep: 4,
+      content: (
+        <>
+          <div className="font-medium text-lg">
+            {bookingData.selectedDate && format(bookingData.selectedDate, "EEEE, MMMM d, yyyy")}
+          </div>
+          <div className="text-muted-foreground">
+            {bookingData.selectedTime}
+          </div>
+        </>
+      ),
+    },
+    ...(bookingData.selectedAddOns && bookingData.selectedAddOns.length > 0 ? [{
+      icon: <SparklesIcon className="w-6 h-6" />,
+      title: "Selected Add-ons",
+      editStep: 5,
+      content: (
+        <>
+          <div className="font-medium text-lg">
+            {bookingData.selectedAddOns.length} {bookingData.selectedAddOns.length === 1 ? 'Add-on' : 'Add-ons'}
+          </div>
+          <div className="text-muted-foreground">
+            {bookingData.selectedPackage?.addOns
+              ?.filter(addon => bookingData.selectedAddOns?.includes(addon.id))
+              .map(addon => addon.name)
+              .join(', ')}
+          </div>
+        </>
+      ),
+    }] : []),
+    {
+      icon: <UserIcon className="w-6 h-6" />,
+      title: "Contact Information",
+      editStep: 6,
+      content: (
+        <div className="space-y-1">
+          <div className="font-medium text-lg">{bookingData.customerInfo?.name}</div>
+          <div className="text-muted-foreground">{bookingData.customerInfo?.email}</div>
+          <div className="text-muted-foreground">{bookingData.customerInfo?.phone}</div>
+          {bookingData.customerInfo?.notes && (
+            <div className="text-sm text-muted-foreground italic mt-2">
+              Note: {bookingData.customerInfo.notes}
+            </div>
+          )}
+        </div>
+      ),
+    },
+  ]
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="container"
+      className="container max-w-3xl mx-auto"
     >
-      <div className="text-center mb-8 md:mb-12">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-3xl md:text-4xl font-bold mb-2 md:mb-4 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
+      <div className="text-center mb-8">
+        <motion.div 
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          className="flex items-center justify-center gap-4 mb-4"
         >
-          Review Your Booking
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-lg md:text-xl text-muted-foreground"
-        >
-          Please verify your booking details before confirming
-        </motion.p>
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Review & Confirm
+          </h1>
+        </motion.div>
       </div>
 
-      <Card className="p-6 md:p-8 space-y-6 md:space-y-8 shadow-xl bg-gradient-to-br from-background to-muted/20">
-        <AnimatePresence mode="wait">
-          <SummarySection
-            key="package-section"
-            icon={<PackageIcon className="w-5 h-5 md:w-6 md:h-6" />}
-            title="Selected Package"
-            editStep={1}
-            onEdit={onEdit}
-          >
-            <div className="font-medium text-lg">{bookingData.selectedPackage?.name}</div>
-            <div className="text-muted-foreground">
-              {bookingData.selectedPackage?.subPackages.find((sp) => sp.id === bookingData.selectedSubPackage)?.name}
-            </div>
-          </SummarySection>
+      <Card className="overflow-hidden border-2 shadow-xl bg-gradient-to-br from-background to-muted/20">
+        <div className="bg-primary text-primary-foreground p-6 text-center">
+          <h3 className="text-xl font-medium mb-1">Total Amount</h3>
+          <div className="text-3xl font-bold">${totalPrice.toFixed(2)}</div>
+        </div>
 
-          <SummarySection
-            key="vehicle-section"
-            icon={<CarIcon className="w-5 h-5 md:w-6 md:h-6" />}
-            title="Vehicle Type"
-            editStep={2}
-            onEdit={onEdit}
-          >
-            <div className="font-medium text-lg capitalize">{bookingData.vehicleType}</div>
-          </SummarySection>
+        <div className="p-6 md:p-8 space-y-6">
+          <div className="divide-y divide-border/50">
+            <AnimatePresence mode="wait">
+              {sections.map((section) => (
+                <SummarySection
+                  key={section.title}
+                  icon={section.icon}
+                  title={section.title}
+                  editStep={section.editStep}
+                  onEdit={onEdit}
+                >
+                  {section.content}
+                </SummarySection>
+              ))}
+            </AnimatePresence>
+          </div>
 
-          <SummarySection
-            key="time-section"
-            icon={<CalendarIcon className="w-5 h-5 md:w-6 md:h-6" />}
-            title="Appointment Time"
-            editStep={3}
-            onEdit={onEdit}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4 pt-6 border-t"
           >
-            <div className="font-medium text-lg">
-              {bookingData.selectedDate && format(bookingData.selectedDate, "MMMM d, yyyy")}
-            </div>
-            <div className="text-muted-foreground">{bookingData.selectedTime}</div>
-          </SummarySection>
-
-          {bookingData.selectedAddOns && bookingData.selectedAddOns.length > 0 && (
-            <SummarySection
-              key="addons-section"
-              icon={<SparklesIcon className="w-5 h-5 md:w-6 md:h-6" />}
-              title="Selected Add-ons"
-              editStep={4}
-              onEdit={onEdit}
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              size="lg"
+              className="w-full text-lg py-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
             >
-              <div className="text-muted-foreground">
-                {bookingData.selectedAddOns.length} add-on{bookingData.selectedAddOns.length !== 1 ? "s" : ""} selected
-              </div>
-            </SummarySection>
-          )}
-
-          <SummarySection
-            key="contact-section"
-            icon={<UserIcon className="w-5 h-5 md:w-6 md:h-6" />}
-            title="Contact Information"
-            editStep={5}
-            onEdit={onEdit}
-          >
-            <div className="space-y-1">
-              <div className="font-medium text-lg">{bookingData.customerInfo?.name}</div>
-              <div className="text-muted-foreground">{bookingData.customerInfo?.email}</div>
-              <div className="text-muted-foreground">{bookingData.customerInfo?.phone}</div>
-            </div>
-          </SummarySection>
-        </AnimatePresence>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          className="flex justify-center pt-6 md:pt-8"
-        >
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            size="lg"
-            className="text-lg px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300"
-          >
-            {isSubmitting ? (
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                Confirm Booking
-              </motion.span>
-            )}
-          </Button>
-        </motion.div>
+              {isSubmitting ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <span className="flex items-center gap-2">
+                  Confirm Booking
+                  <span className="text-xl">→</span>
+                </span>
+              )}
+            </Button>
+            
+            <p className="text-center text-sm text-muted-foreground">
+              By clicking confirm, you agree to our terms and conditions
+            </p>
+          </motion.div>
+        </div>
       </Card>
     </motion.div>
   )
@@ -181,28 +208,31 @@ interface SummarySectionProps {
 function SummarySection({ icon, title, children, editStep, onEdit }: SummarySectionProps) {
   return (
     <motion.div
-      key={`summary-section-${title}`}  // Add unique key
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.3 }}
-      className="flex items-start justify-between group bg-card hover:bg-muted/50 p-4 rounded-lg transition-all duration-300"
+      className="py-4"
     >
-      <div className="flex gap-4">
-        <div className="mt-1 text-primary bg-primary/10 p-2 rounded-full">{icon}</div>
-        <div>
-          <h3 className="font-semibold text-lg mb-2">{title}</h3>
-          {children}
+      <div className="flex items-start justify-between rounded-lg p-4 transition-colors hover:bg-muted/50">
+        <div className="flex items-center gap-4">
+          <div className="shrink-0 w-12 h-12 flex items-center justify-center text-primary bg-primary/10 rounded-full">
+            {icon}
+          </div>
+          <div>
+            <div className="flex items-center gap-3">
+              <h3 className="font-semibold text-lg">{title}</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onEdit(editStep)}
+                className="h-7 px-2 text-xs font-medium text-primary hover:text-primary hover:bg-primary/10"
+              >
+                Edit
+              </Button>
+            </div>
+            <div className="mt-1">{children}</div>
+          </div>
         </div>
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => onEdit(editStep)}
-        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-      >
-        Edit
-      </Button>
     </motion.div>
   )
 }

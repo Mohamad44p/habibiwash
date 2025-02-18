@@ -3,7 +3,7 @@
 import { motion } from "motion/react"
 import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useMemo } from "react"
+import { useMemo, useEffect, useState } from "react"
 
 interface StepProps {
   currentStep: number
@@ -16,8 +16,16 @@ interface StepProps {
 }
 
 export function Steps({ currentStep, steps, onStepClick, className }: StepProps) {
-  // Memoize steps
+  const [isMounted, setIsMounted] = useState(false)
   const memoizedSteps = useMemo(() => steps, [steps])
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  const progressWidth = isMounted 
+    ? `${((currentStep - 1) / (memoizedSteps.length - 1)) * 100}%`
+    : "0%"
 
   return (
     <nav 
@@ -25,16 +33,11 @@ export function Steps({ currentStep, steps, onStepClick, className }: StepProps)
       aria-label="Booking progress"
     >
       <div className="relative flex justify-between items-center">
-        {/* Background line */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-muted rounded-full" />
 
-        {/* Animated progress line */}
         <motion.div
           className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-primary to-primary/80 rounded-full"
-          initial={false}
-          animate={{
-            width: `${((currentStep - 1) / (memoizedSteps.length - 1)) * 100}%`,
-          }}
+          style={{ width: progressWidth }}
           transition={{ duration: 0.3 }}
         />
 
@@ -81,7 +84,6 @@ export function Steps({ currentStep, steps, onStepClick, className }: StepProps)
                 )}
               </div>
 
-              {/* Pulse animation for current step */}
               {currentStep === index + 1 && (
                 <motion.div
                   className="absolute inset-0 rounded-full border-2 border-primary"

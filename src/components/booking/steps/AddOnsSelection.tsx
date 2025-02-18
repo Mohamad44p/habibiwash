@@ -3,8 +3,7 @@
 import { motion } from "motion/react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Sparkles, type LucideIcon } from "lucide-react"
+import { Sparkles, type LucideIcon, Check } from "lucide-react"
 import { useState, useEffect, useCallback } from "react"
 import { getAddOns } from "@/app/actions/addOnsActions"
 import type { AddOn } from "@/types/addOn"
@@ -30,15 +29,20 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
     loadAddOns()
   }, [loadAddOns])
 
-  const handleContinue = () => {
-    onSelect(selected)
+  const handleSelect = (addonId: string) => {
+    setSelected(prev => {
+      const newSelected = prev.includes(addonId)
+        ? prev.filter(id => id !== addonId)
+        : [...prev, addonId]
+      return newSelected
+    })
   }
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="container space-y-8"
+      className="container max-w-screen space-y-8"
     >
       <div className="text-center space-y-4">
         <motion.div 
@@ -46,82 +50,135 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
           animate={{ y: 0 }}
           className="flex items-center justify-center gap-4"
         >
-          <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-primary animate-pulse" />
+          <Sparkles className="w-8 h-8 text-primary animate-pulse" />
           <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             Enhance Your Service
           </h1>
-          <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-primary animate-pulse" />
+          <Sparkles className="w-8 h-8 text-primary animate-pulse" />
         </motion.div>
         <motion.p 
           initial={{ y: -10 }}
           animate={{ y: 0 }}
-          className="text-lg md:text-xl text-muted-foreground"
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
         >
-          Choose from our premium add-ons to perfect your wash
+          Customize your wash with our premium add-ons for the perfect finish
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {addOns.map((addon) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {addOns.map((addon, index) => {
           const IconComponent = AVAILABLE_ICONS[addon.icon] as LucideIcon
+          const isSelected = selected.includes(addon.id)
+
           return (
             <motion.div
               key={addon.id}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: 1, 
-                y: 0,
-                transition: { delay: 0.1 }
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
             >
               <Card
                 className={cn(
-                  "p-4 md:p-6 cursor-pointer transition-all duration-300",
-                  selected.includes(addon.id)
-                    ? "border-primary ring-4 ring-primary ring-opacity-50 shadow-lg"
-                    : "hover:shadow-md"
+                  "group relative overflow-hidden cursor-pointer transition-all duration-300",
+                  "hover:shadow-xl hover:shadow-primary/20 transform-gpu",
+                  "border-2",
+                  isSelected
+                    ? "border-primary bg-primary/5 scale-[1.02]"
+                    : "border-transparent hover:border-primary/50"
                 )}
+                onClick={() => handleSelect(addon.id)}
               >
-                <div className="flex items-start space-x-4">
-                  <Checkbox
-                    id={addon.id}
-                    checked={selected.includes(addon.id)}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        setSelected([...selected, addon.id])
-                      } else {
-                        setSelected(selected.filter((id) => id !== addon.id))
-                      }
-                    }}
-                    className="mt-1"
+                {/* Selection indicator */}
+                {isSelected && (
+                  <motion.div
+                    layoutId="selection-ring"
+                    className="absolute inset-0 border-2 border-primary rounded-lg"
+                    initial={false}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2 md:mb-3">
-                      {IconComponent && <IconComponent className="h-5 w-5 md:h-6 md:w-6 text-primary" />}
-                      <label htmlFor={addon.id} className="text-lg md:text-xl font-semibold cursor-pointer">
-                        {addon.name}
-                      </label>
+                )}
+
+                <div className="p-6 space-y-6">
+                  <div className="flex items-start gap-4">
+                    {/* Icon container */}
+                    <div className={cn(
+                      "p-3 rounded-full transition-all duration-300",
+                      isSelected
+                        ? "bg-primary text-white scale-110"
+                        : "bg-primary/10 text-primary group-hover:bg-primary/20"
+                    )}>
+                      {IconComponent && <IconComponent className="w-6 h-6" />}
                     </div>
-                    <p className="text-md md:text-lg text-muted-foreground mb-3 md:mb-4">{addon.description}</p>
-                    <p className="text-xl font-bold text-primary">+${addon.price.toFixed(2)}</p>
+
+                    {/* Content */}
+                    <div className="flex-1 space-y-2">
+                      <div className="flex justify-between items-start gap-4">
+                        <h3 className="text-xl font-semibold">
+                          {addon.name}
+                        </h3>
+                        <div className={cn(
+                          "flex items-center gap-2 text-lg font-bold",
+                          "bg-gradient-to-r",
+                          isSelected
+                            ? "from-primary to-primary/80 bg-clip-text text-transparent"
+                            : "text-muted-foreground"
+                        )}>
+                          +${addon.price.toFixed(2)}
+                        </div>
+                      </div>
+                      <p className="text-muted-foreground line-clamp-[7]">{addon.description}</p>
+                    </div>
+                  </div>
+
+                  <div className={cn(
+                    "flex items-center gap-2 text-sm transition-colors",
+                    isSelected ? "text-primary" : "text-muted-foreground"
+                  )}>
+                    <div className={cn(
+                      "w-5 h-5 rounded-full border-2 flex items-center justify-center",
+                      isSelected ? "border-primary" : "border-muted-foreground"
+                    )}>
+                      {isSelected && <Check className="w-3 h-3" />}
+                    </div>
+                    {isSelected ? "Selected" : "Click to select"}
                   </div>
                 </div>
+
+                <div className={cn(
+                  "absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-300",
+                  "group-hover:opacity-100"
+                )} />
               </Card>
             </motion.div>
           )
         })}
       </div>
 
-      <div className="flex justify-center gap-4 mt-6">
-        <Button variant="outline" onClick={onBack} size="lg" className="text-lg px-6 py-3 md:px-8 md:py-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-center gap-4 pt-8"
+      >
+        <Button 
+          variant="outline" 
+          onClick={onBack} 
+          size="lg" 
+          className="min-w-[140px] text-lg"
+        >
           Back
         </Button>
-        <Button onClick={handleContinue} size="lg" className="text-lg px-6 py-3 md:px-8 md:py-4">
-          Continue
+        <Button 
+          onClick={() => onSelect(selected)}
+          size="lg"
+          className={cn(
+            "min-w-[140px] text-lg",
+            "bg-gradient-to-r from-primary to-primary/80",
+            "hover:from-primary/90 hover:to-primary/70"
+          )}
+        >
+          Continue {selected.length > 0 && `(${selected.length})`}
         </Button>
-      </div>
+      </motion.div>
     </motion.div>
   )
 }
