@@ -11,6 +11,7 @@ import { createBooking } from "@/app/actions/bookingActions"
 import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
 import { format } from "date-fns"
+import { sendBookingConfirmationEmail } from "@/app/actions/server/emailActions"
 
 interface BookingSummaryProps {
   bookingData: BookingData
@@ -25,15 +26,31 @@ export default function BookingSummary({ bookingData, onEdit, totalPrice }: Book
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true)
+      
+      // Create booking
       const booking = await createBooking(bookingData)
       if (!booking?.booking) {
         throw new Error("Booking creation failed")
       }
-      toast({
-        title: "Booking Confirmed",
-        description: "Your booking has been successfully created.",
-        duration: 5000,
-      })
+
+      try {
+        // Send confirmation email
+        await sendBookingConfirmationEmail(bookingData, totalPrice)
+        toast({
+          title: "Booking Confirmed",
+          description: "Your booking has been successfully created. Check your email for confirmation details.",
+          duration: 5000,
+        })
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError)
+        // Still show success but mention email issue
+        toast({
+          title: "Booking Confirmed",
+          description: "Your booking was created but we couldn't send the confirmation email. Please contact support.",
+          duration: 5000,
+        })
+      }
+      
       router.push(`/booking/confirmation/${booking.booking.id}`)
     } catch (error) {
       console.error(error)

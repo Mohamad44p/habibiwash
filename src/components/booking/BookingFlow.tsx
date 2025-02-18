@@ -74,33 +74,29 @@ export default function BookingFlow({ initialPackages }: BookingFlowProps) {
   );
 
   const totalPrice = useMemo(() => {
-    if (
-      !bookingData.selectedPackage ||
-      !bookingData.selectedSubPackage ||
-      !bookingData.vehicleType
-    ) {
+    if (!bookingData.selectedPackage || !bookingData.selectedSubPackage || !bookingData.vehicleType) {
       return 0;
     }
 
+    // Find the selected sub-package
     const subPackage = bookingData.selectedPackage.subPackages.find(
       (sp) => sp.id === bookingData.selectedSubPackage
     );
 
-    const basePrice =
-      subPackage?.prices.find(
-        (p) =>
-          p.vehicleType.toLowerCase() === bookingData.vehicleType?.toLowerCase()
-      )?.price || 0;
+    if (!subPackage) return 0;
 
-    const addOnsTotal = (bookingData.selectedAddOns || []).reduce(
-      (total, addOnId) => {
-        const addOn = bookingData.selectedPackage?.addOns?.find(
-          (addon) => addon.id === addOnId
-        );
-        return total + (addOn?.price || 0);
-      },
-      0
-    );
+    // Get base price for the selected vehicle type
+    const basePrice = subPackage.prices.find(
+      (p) => p.vehicleType.toLowerCase() === bookingData.vehicleType?.toLowerCase()
+    )?.price || 0;
+
+    // Calculate add-ons total
+    const addOnsTotal = (bookingData.selectedAddOns || []).reduce((total, addOnId) => {
+      const addOn = bookingData.selectedPackage?.addOns?.find(
+        (addon) => addon.id === addOnId
+      );
+      return total + (addOn?.price || 0);
+    }, 0);
 
     return basePrice + addOnsTotal;
   }, [bookingData]);
