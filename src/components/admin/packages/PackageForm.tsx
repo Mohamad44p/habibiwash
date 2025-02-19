@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { useForm, useFieldArray, Control } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import { VehicleType } from '@prisma/client'
+import { Package } from '@/types/package'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { VehicleType } from '@prisma/client'
-import { Package } from '@/types/package'
 import { useRouter } from 'next/navigation'
 import { RichTextEditor } from '@/components/front/Editor/RichTextEditor'
 import { ImageUpload } from '@/lib/ImageUpload'
@@ -18,9 +18,7 @@ import { Switch } from "@/components/ui/switch"
 
 const priceSchema = z.object({
   id: z.string().optional(),
-  vehicleType: z.nativeEnum(VehicleType, {
-    errorMap: () => ({ message: 'Please select a vehicle type' }),
-  }),
+  vehicleType: z.nativeEnum(VehicleType),
   price: z.number().min(0, 'Price must be a positive number'),
 })
 
@@ -28,45 +26,51 @@ const subPackageSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, 'Sub package name is required'),
   description: z.string().min(1, 'Description is required'),
-  duration: z.coerce.number().min(1, 'Duration must be at least 1 minute'), 
+  duration: z.coerce.number().min(1, 'Duration must be at least 1 minute'),
+  image: z.string().optional().nullable(),
   prices: z.array(priceSchema).min(1, 'At least one price is required'),
-  image: z.string().optional(),
 })
 
 const packageSchema = z.object({
   name: z.string().min(1, 'Package name is required'),
-  image: z.string().optional(),
+  image: z.string().optional().nullable(),
   featured: z.boolean().default(false),
   basePrice: z.number().min(0, 'Base price must be a positive number'),
   subPackages: z.array(subPackageSchema).min(1, 'At least one sub package is required'),
 })
 
-type PackageFormValues = z.infer<typeof packageSchema>
+type FormValues = z.infer<typeof packageSchema>
 
 export default function PackageForm({ initialData }: { initialData?: Package }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm<PackageFormValues>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(packageSchema),
     defaultValues: initialData ? {
       name: initialData.name,
-      image: initialData.image || undefined,
+      image: initialData.image ?? undefined,
       featured: initialData.featured,
       basePrice: initialData.basePrice,
-      subPackages: initialData.subPackages || [{
+      subPackages: initialData.subPackages.map(sp => ({
+        ...sp,
+        prices: sp.prices.map(p => ({
+          ...p,
+          vehicleType: p.vehicleType as VehicleType
+        }))
+      }))
+    } : {
+      name: '',
+      image: null,
+      featured: false,
+      basePrice: 0,
+      subPackages: [{
         name: '',
         description: '',
         duration: 0,
         prices: [{ vehicleType: VehicleType.SEDAN, price: 0 }],
-        image: ''
+        image: null
       }],
-    } : {
-      name: '',
-      image: '',
-      featured: false,
-      basePrice: 0,
-      subPackages: [{ name: '', description: '', duration: 0, prices: [{ vehicleType: VehicleType.SEDAN, price: 0 }], image: '' }],
     },
   })
 
@@ -75,7 +79,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
     name: 'subPackages',
   });
 
-  const onSubmit = async (data: PackageFormValues) => {
+  const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true)
     try {
       if (initialData?.image && initialData.image !== data.image) {
@@ -169,7 +173,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                   <FormLabel className="text-lg font-medium dark:text-gray-100">Package Image</FormLabel>
                   <FormControl>
                     <ImageUpload 
-                      value={field.value} 
+                      value={field.value ?? undefined} 
                       onChange={field.onChange} 
                       height="250px" 
                     />
@@ -271,7 +275,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                           <FormLabel className="text-lg font-medium dark:text-gray-100">Sub Package Image</FormLabel>
                           <FormControl>
                             <ImageUpload 
-                              value={field.value} 
+                              value={field.value ?? undefined} 
                               onChange={field.onChange} 
                               height="200px" 
                             />
@@ -322,7 +326,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
   );
 }
 
-function PriceFields({ control, subPackageIndex }: { control: Control<PackageFormValues>, subPackageIndex: number }) {
+function PriceFields({ control, subPackageIndex }: { control: Control<FormValues>, subPackageIndex: number }) {
   const { fields: priceFields, append: appendPrice, remove: removePrice } = useFieldArray({
     control,
     name: `subPackages.${subPackageIndex}.prices`,

@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Package, normalizePrismaPackage } from "@/types/package";
+import { Package, PackageFormData, normalizePrismaPackage } from "@/types/package";
 import db from "../db/db";
-import { Prisma } from "@prisma/client";
+import { Prisma, VehicleType } from "@prisma/client";
 
 const packageInclude = Prisma.validator<Prisma.PackageInclude>()({
   subPackages: {
@@ -18,9 +18,6 @@ const packageInclude = Prisma.validator<Prisma.PackageInclude>()({
 type PackageWithRelations = Prisma.PackageGetPayload<{
   include: typeof packageInclude;
 }>;
-
-// Add a type for the form data
-type PackageFormData = Omit<Package, 'id' | 'createdAt' | 'updatedAt' | 'addOns'>;
 
 export async function getPackages(): Promise<Package[]> {
   try {
@@ -59,6 +56,7 @@ export async function createPackage(data: PackageFormData) {
             },
           })),
         },
+        addOns: { connect: [] },
       },
       include: packageInclude,
     });
@@ -92,7 +90,7 @@ export async function updatePackage(id: string, data: PackageFormData) {
             image: subPackage.image ?? null,
             prices: {
               create: subPackage.prices.map((price) => ({
-                vehicleType: price.vehicleType,
+                vehicleType: price.vehicleType as VehicleType,
                 price: price.price,
               })),
             },

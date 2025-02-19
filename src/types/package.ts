@@ -29,6 +29,30 @@ export interface Package {
   updatedAt?: Date;
 }
 
+// Add a new interface for form data
+export interface PackageFormPrice {
+  id?: string;
+  vehicleType: PrismaVehicleType;
+  price: number;
+}
+
+export interface PackageFormSubPackage {
+  id?: string;
+  name: string;
+  description: string;
+  duration: number;
+  image?: string | null;
+  prices: PackageFormPrice[];
+}
+
+export interface PackageFormData {
+  name: string;
+  image?: string | null;
+  featured: boolean;
+  basePrice: number;
+  subPackages: PackageFormSubPackage[];
+}
+
 export type AddOn = {
   id: string;
   name: string;
