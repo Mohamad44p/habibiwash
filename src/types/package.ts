@@ -2,26 +2,32 @@ import { VehicleType as PrismaVehicleType } from '@prisma/client';
 
 export { VehicleType } from '@prisma/client';
 
-export type Price = {
-  id?: string;
-  vehicleType: PrismaVehicleType;
+export interface Price {
+  id: string;
+  vehicleType: string;
   price: number;
-  subPackageId?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
+}
 
-export type SubPackage = {
-  id?: string;
+export interface SubPackage {
+  id: string;
   name: string;
   description: string;
   duration: number;
+  image?: string | null;
   prices: Price[];
-  packageId?: string;
+}
+
+export interface Package {
+  id: string;
+  name: string;
+  image?: string | null;
+  featured: boolean;
+  basePrice: number;
+  subPackages: SubPackage[];
+  addOns?: AddOn[];
   createdAt?: Date;
   updatedAt?: Date;
-  image?: string; 
-};
+}
 
 export type AddOn = {
   id: string;
@@ -29,18 +35,6 @@ export type AddOn = {
   description: string;
   price: number;
   icon: string;
-};
-
-export type Package = {
-  id: string; // Make id required
-  name: string;
-  image?: string;
-  featured: boolean; // Make featured required with a default value
-  subPackages: SubPackage[];
-  addOns?: AddOn[];
-  createdAt: Date; // Make dates required
-  updatedAt: Date;
-  basePrice: number;
 };
 
 type PrismaPrice = {

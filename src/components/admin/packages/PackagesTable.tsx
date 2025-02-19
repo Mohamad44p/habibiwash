@@ -1,60 +1,52 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Package } from "@/types/package";
-import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { Pencil, Trash, Star } from "lucide-react";
-import Link from "next/link";
-import { deletePackage } from "@/app/actions/packagesActions";
-import { DataTable } from "./data-table";
-import Image from "next/image";
+import { useState } from "react"
+import type { Package } from "@/types/package"
+import { Button } from "@/components/ui/button"
+import { Pencil, Trash, Star } from "lucide-react"
+import Link from "next/link"
+import { deletePackage } from "@/app/actions/packagesActions"
+import { DataTable } from "../packages/data-table"
+import Image from "next/image"
 
 export default function PackagesTable({
   initialPackages,
 }: {
-  initialPackages: Package[];
+  initialPackages: Package[]
 }) {
-  const [packages, setPackages] = useState<Package[]>(initialPackages);
+  const [packages, setPackages] = useState<Package[]>(initialPackages)
 
-  const columns: ColumnDef<Package>[] = [
+  const columns = [
     {
-      accessorKey: "name",
-      header: "Name",
+      key: "name" as keyof Package,
+      label: "Name",
+      sortable: true,
     },
     {
-      accessorKey: "image",
-      header: "Image",
-      cell: ({ row }) => (
+      key: "image" as keyof Package,
+      label: "Image",
+      render: (value: string) => (
         <div className="relative w-10 h-10">
-          <Image
-            key={row.original.id}
-            src={row.original.image || "/Logo1.png"}
-            alt={row.original.name}
-            fill
-            className="object-cover rounded"
-            sizes="40px"
-          />
+          <Image src={value || "/Logo1.png"} alt="Package" fill className="object-cover rounded" sizes="40px" />
         </div>
       ),
     },
     {
-      accessorKey: "subPackages",
-      header: "Sub Packages",
-      cell: ({ row }) => row.original.subPackages.length,
+      key: "subPackages" as keyof Package,
+      label: "Sub Packages",
+      render: (value: Package["subPackages"]) => value.length,
     },
     {
-      accessorKey: "featured",
-      header: "Featured",
-      cell: ({ row }) => row.original.featured ? (
-        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-      ) : null,
+      key: "featured" as keyof Package,
+      label: "Featured",
+      render: (value: boolean) => (value ? <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" /> : null),
     },
     {
-      id: "actions",
-      cell: ({ row }) => (
+      key: "id" as keyof Package,
+      label: "Actions",
+      render: (value: string, package_: Package) => (
         <div className="flex items-center gap-2">
-          <Link href={`/admin/packages/${row.original.id}/edit`}>
+          <Link href={`/admin/packages/${package_.id}/edit`}>
             <Button variant="outline" size="sm">
               <Pencil className="w-4 h-4 mr-2" />
               Edit
@@ -65,8 +57,8 @@ export default function PackagesTable({
             size="sm"
             onClick={async () => {
               if (confirm("Are you sure you want to delete this package?")) {
-                await deletePackage(row.original.id!);
-                setPackages(packages.filter((p) => p.id !== row.original.id));
+                await deletePackage(package_.id!)
+                setPackages(packages.filter((p) => p.id !== package_.id))
               }
             }}
           >
@@ -76,16 +68,8 @@ export default function PackagesTable({
         </div>
       ),
     },
-  ];
+  ]
 
-  return (
-    <div suppressHydrationWarning>
-      <DataTable
-        columns={columns}
-        data={packages}
-        filterColumn="name"
-        filterPlaceholder="Filter packages..."
-      />
-    </div>
-  );
+  return <DataTable columns={columns} data={packages} />
 }
+

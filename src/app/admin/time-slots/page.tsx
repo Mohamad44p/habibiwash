@@ -10,9 +10,11 @@ export default async function TimeSlotsPage() {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">Time Slots Management</h1>
-      <Link href="/admin/time-slots/create">
-        <Button>Create New Time Slot</Button>
-      </Link>
+      <div className="py-5">
+        <Link href="/admin/time-slots/create" className="py-2">
+          <Button>Create New Time Slot</Button>
+        </Link>
+      </div>
       <Suspense fallback={<div>Loading...</div>}>
         <TimeSlotsTable initialTimeSlots={timeSlots} />
       </Suspense>

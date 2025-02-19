@@ -50,16 +50,16 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
           animate={{ y: 0 }}
           className="flex items-center justify-center gap-4"
         >
-          <Sparkles className="w-8 h-8 text-primary animate-pulse" />
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+          <Sparkles className="w-8 h-8 text-primary dark:text-primary/90 animate-pulse" />
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 dark:from-primary/90 dark:to-primary/70 bg-clip-text text-transparent">
             Enhance Your Service
           </h1>
-          <Sparkles className="w-8 h-8 text-primary animate-pulse" />
+          <Sparkles className="w-8 h-8 text-primary dark:text-primary/90 animate-pulse" />
         </motion.div>
         <motion.p 
           initial={{ y: -10 }}
           animate={{ y: 0 }}
-          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+          className="text-lg md:text-xl text-muted-foreground dark:text-muted-foreground/90 max-w-2xl mx-auto"
         >
           Customize your wash with our premium add-ons for the perfect finish
         </motion.p>
@@ -80,11 +80,11 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
               <Card
                 className={cn(
                   "group relative overflow-hidden cursor-pointer transition-all duration-300",
-                  "hover:shadow-xl hover:shadow-primary/20 transform-gpu",
+                  "hover:shadow-xl hover:shadow-primary/20 dark:hover:shadow-primary/10 transform-gpu",
                   "border-2",
                   isSelected
-                    ? "border-primary bg-primary/5 scale-[1.02]"
-                    : "border-transparent hover:border-primary/50"
+                    ? "border-primary dark:border-primary/80 bg-primary/5 dark:bg-primary/10 scale-[1.02]"
+                    : "border-transparent hover:border-primary/50 dark:hover:border-primary/40"
                 )}
                 onClick={() => handleSelect(addon.id)}
               >
@@ -92,7 +92,7 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
                 {isSelected && (
                   <motion.div
                     layoutId="selection-ring"
-                    className="absolute inset-0 border-2 border-primary rounded-lg"
+                    className="absolute inset-0 border-2 border-primary dark:border-primary/80 rounded-lg"
                     initial={false}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
@@ -104,8 +104,8 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
                     <div className={cn(
                       "p-3 rounded-full transition-all duration-300",
                       isSelected
-                        ? "bg-primary text-white scale-110"
-                        : "bg-primary/10 text-primary group-hover:bg-primary/20"
+                        ? "bg-primary dark:bg-primary/90 text-primary-foreground scale-110"
+                        : "bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary/90 group-hover:bg-primary/20 dark:group-hover:bg-primary/30"
                     )}>
                       {IconComponent && <IconComponent className="w-6 h-6" />}
                     </div>
@@ -113,30 +113,34 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
                     {/* Content */}
                     <div className="flex-1 space-y-2">
                       <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-xl font-semibold">
+                        <h3 className="text-xl font-semibold dark:text-foreground/90">
                           {addon.name}
                         </h3>
                         <div className={cn(
                           "flex items-center gap-2 text-lg font-bold",
                           "bg-gradient-to-r",
                           isSelected
-                            ? "from-primary to-primary/80 bg-clip-text text-transparent"
-                            : "text-muted-foreground"
+                            ? "from-primary to-primary/80 dark:from-primary/90 dark:to-primary/70 bg-clip-text text-transparent"
+                            : "text-muted-foreground dark:text-muted-foreground/90"
                         )}>
                           +${addon.price.toFixed(2)}
                         </div>
                       </div>
-                      <p className="text-muted-foreground line-clamp-[7]">{addon.description}</p>
+                      <p className="text-muted-foreground dark:text-muted-foreground/90 line-clamp-[7]">
+                        {addon.description}
+                      </p>
                     </div>
                   </div>
 
                   <div className={cn(
                     "flex items-center gap-2 text-sm transition-colors",
-                    isSelected ? "text-primary" : "text-muted-foreground"
+                    isSelected ? "text-primary dark:text-primary/90" : "text-muted-foreground dark:text-muted-foreground/80"
                   )}>
                     <div className={cn(
                       "w-5 h-5 rounded-full border-2 flex items-center justify-center",
-                      isSelected ? "border-primary" : "border-muted-foreground"
+                      isSelected 
+                        ? "border-primary dark:border-primary/90" 
+                        : "border-muted-foreground dark:border-muted-foreground/80"
                     )}>
                       {isSelected && <Check className="w-3 h-3" />}
                     </div>
@@ -145,7 +149,8 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
                 </div>
 
                 <div className={cn(
-                  "absolute inset-0 bg-primary/5 opacity-0 transition-opacity duration-300",
+                  "absolute inset-0 opacity-0 transition-opacity duration-300",
+                  "bg-primary/5 dark:bg-primary/10",
                   "group-hover:opacity-100"
                 )} />
               </Card>
@@ -172,8 +177,8 @@ export default function AddOnsSelection({ selectedAddOns, onSelect, onBack }: Ad
           size="lg"
           className={cn(
             "min-w-[140px] text-lg",
-            "bg-gradient-to-r from-primary to-primary/80",
-            "hover:from-primary/90 hover:to-primary/70"
+            "bg-gradient-to-r from-primary to-primary/80 dark:from-primary/90 dark:to-primary/70",
+            "hover:from-primary/90 hover:to-primary/70 dark:hover:from-primary/80 dark:hover:to-primary/60"
           )}
         >
           Continue {selected.length > 0 && `(${selected.length})`}

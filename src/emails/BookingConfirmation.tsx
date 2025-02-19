@@ -17,11 +17,13 @@ import { format } from "date-fns";
 interface BookingConfirmationEmailProps {
   booking: BookingData;
   totalPrice: number;
+  isAdminNotification?: boolean;
 }
 
 export default function BookingConfirmationEmail({
   booking,
   totalPrice,
+  isAdminNotification = false,
 }: BookingConfirmationEmailProps) {
   // Get base package price and info
   const selectedPackage = booking.selectedPackage;
@@ -47,7 +49,11 @@ export default function BookingConfirmationEmail({
   return (
     <Html>
       <Head />
-      <Preview>Your car wash booking confirmation from HabibiWash</Preview>
+      <Preview>
+        {isAdminNotification
+          ? "New Booking Received - HabibiWash"
+          : "Your car wash booking confirmation from HabibiWash"}
+      </Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={logoSection}>
@@ -60,7 +66,19 @@ export default function BookingConfirmationEmail({
             />
           </Section>
 
-          <Heading style={header}>Booking Confirmation</Heading>
+          <Heading style={header}>
+            {isAdminNotification
+              ? "New Booking Received"
+              : "Booking Confirmation"}
+          </Heading>
+
+          {isAdminNotification && (
+            <Section style={section}>
+              <Text style={value}>
+                A new booking has been received from {booking.customerInfo?.name}.
+              </Text>
+            </Section>
+          )}
 
           <Section style={section}>
             <Row style={row}>
@@ -159,7 +177,7 @@ export default function BookingConfirmationEmail({
             <Text style={contactText}>
               Need to make changes? Contact us at:
               <br />
-              Email: habibiwash@gmail.com
+              Email: habibiwash99@gmail.com
               <br />
               Phone: 9452166478
             </Text>

@@ -15,31 +15,37 @@ type PrismaBookingResult = Omit<PrismaBooking, "addOns"> & {
 };
 
 export async function getBookings(): Promise<Booking[]> {
-  const bookings = await db.booking.findMany({
-    include: {
-      package: {
-        select: {
-          name: true,
+  try {
+    const bookings = await db.booking.findMany({
+      include: {
+        package: {
+          select: {
+            name: true,
+          },
+        },
+        timeSlot: {
+          select: {
+            startTime: true,
+            endTime: true,
+          },
+        },
+        addOns: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            icon: true,
+          },
         },
       },
-      timeSlot: {
-        select: {
-          startTime: true,
-          endTime: true,
-        },
-      },
-      addOns: {
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          icon: true,
-        },
-      },
-    },
-  });
+      orderBy: { createdAt: 'desc' }
+    });
 
-  return bookings.map((booking) => normalizeBooking(booking as PrismaBookingResult));
+    return bookings.map((booking) => normalizeBooking(booking as PrismaBookingResult));
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    return [];
+  }
 }
 
 export async function getBooking(id: string): Promise<Booking | null> {

@@ -1,17 +1,33 @@
 "use client";
 
-import { useEffect, useState, useMemo, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircleIcon } from "lucide-react";
 import { motion } from "motion/react";
 import React from "react";
-import { useLocalStorage } from "@/lib/useLocalStorage";
-import type { BookingData } from "@/components/booking/BookingFlow";
 
 interface ConfirmationProps {
-  params: { id: string }
+  params: { id: string };
+}
+
+interface BookingDetails {
+  id: string;
+  totalPrice: number;
+  customerName: string;
+  customerEmail: string;
+}
+
+async function getBookingDetails(id: string): Promise<BookingDetails | null> {
+  try {
+    const response = await fetch(`/api/bookings/${id}`);
+    if (!response.ok) throw new Error("Failed to fetch booking");
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    return null;
+  }
 }
 
 export default function SuccessPage({ params }: ConfirmationProps) {
@@ -29,42 +45,26 @@ interface SuccessContentProps {
 function SuccessContent({ bookingId }: SuccessContentProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [bookingData, setBookingData] = useLocalStorage<BookingData>(
-    "booking-flow-data",
-    {}
-  );
+  const [booking, setBooking] = useState<BookingDetails | null>(null);
 
-  const totalPrice = useMemo(() => {
-    let price =
-      bookingData.selectedPackage?.subPackages.find(
-        (sp) => sp.id === bookingData.selectedSubPackage
-      )?.prices[0].price || 0;
+  useEffect(() => {
+    const fetchBookingDetails = async () => {
+      const details = await getBookingDetails(bookingId);
+      if (details) {
+        setBooking(details);
+      }
+    };
 
-    if (bookingData.selectedAddOns && bookingData.selectedPackage?.addOns) {
-      bookingData.selectedAddOns.forEach((addOnId) => {
-        const addOnPrice =
-          bookingData.selectedPackage?.addOns?.find(
-            (addOn) => addOn.id === addOnId
-          )?.price || 0;
-        price += addOnPrice;
-      });
+    if (mounted) {
+      fetchBookingDetails();
     }
-
-    return price;
-  }, [bookingData]);
+  }, [bookingId, mounted]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (mounted) {
-      localStorage.removeItem("booking-flow-data");
-    }
-  }, [mounted]);
-
-  if (!mounted) {
+  if (!mounted || !booking) {
     return null;
   }
 
@@ -91,7 +91,7 @@ function SuccessContent({ bookingId }: SuccessContentProps) {
               You will receive an email with the details of your appointment.
             </p>
             <p className="text-2xl font-bold text-primary">
-              Total Price: ${totalPrice?.toFixed(2)}
+              Total Price: ${booking.totalPrice.toFixed(2)}
             </p>
           </div>
           <Button onClick={() => router.push("/")} className="w-full">

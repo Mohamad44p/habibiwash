@@ -24,6 +24,7 @@ export interface Booking {
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
+  totalPrice: number;  // Add this line
 }
 
 export type PrismaBooking = {
@@ -49,6 +50,7 @@ export type PrismaBooking = {
     startTime: string;
     endTime: string;
   };
+  totalPrice: number;  // Add this line
 };
 
 export function normalizeBooking(prismaBooking: PrismaBooking): Booking {

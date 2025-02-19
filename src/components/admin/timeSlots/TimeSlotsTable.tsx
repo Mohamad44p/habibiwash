@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { TimeSlot } from "@/types/timeSlot";
-import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import Link from "next/link";
@@ -16,20 +15,23 @@ export default function TimeSlotsTable({
 }) {
   const [timeSlots, setTimeSlots] = useState(initialTimeSlots);
 
-  const columns: ColumnDef<TimeSlot>[] = [
+  const columns = [
     {
-      accessorKey: "startTime",
-      header: "Start Time",
+      key: "startTime" as keyof TimeSlot,
+      label: "Start Time",
+      sortable: true,
     },
     {
-      accessorKey: "endTime",
-      header: "End Time",
+      key: "endTime" as keyof TimeSlot,
+      label: "End Time",
+      sortable: true,
     },
     {
-      id: "actions",
-      cell: ({ row }) => (
+      key: "id" as keyof TimeSlot,
+      label: "Actions",
+      render: (_: string, timeSlot: TimeSlot) => (
         <div className="flex items-center gap-2">
-          <Link href={`/admin/time-slots/${row.original.id}/edit`}>
+          <Link href={`/admin/time-slots/${timeSlot.id}/edit`}>
             <Button variant="outline" size="sm">
               <Pencil className="w-4 h-4 mr-2" />
               Edit
@@ -40,8 +42,8 @@ export default function TimeSlotsTable({
             size="sm"
             onClick={async () => {
               if (confirm("Are you sure you want to delete this time slot?")) {
-                await deleteTimeSlot(row.original.id!);
-                setTimeSlots(timeSlots.filter((t) => t.id !== row.original.id));
+                await deleteTimeSlot(timeSlot.id!);
+                setTimeSlots(timeSlots.filter((t) => t.id !== timeSlot.id));
               }
             }}
           >
@@ -53,12 +55,5 @@ export default function TimeSlotsTable({
     },
   ];
 
-  return (
-    <DataTable
-      columns={columns}
-      data={timeSlots}
-      filterColumn="startTime"
-      filterPlaceholder="Filter time slots..."
-    />
-  );
+  return <DataTable columns={columns} data={timeSlots} />;
 }

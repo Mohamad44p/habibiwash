@@ -1,22 +1,21 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Booking, BookingStatus } from "@/types/booking";
-import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { Eye, CheckCircle, XCircle } from "lucide-react";
-import Link from "next/link";
-import { updateBookingStatus } from "@/app/actions/bookingsActions";
-import { DataTable } from "../packages/data-table";
-import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react"
+import type { Booking, BookingStatus } from "@/types/booking"
+import { Button } from "@/components/ui/button"
+import { Eye, CheckCircle, XCircle } from "lucide-react"
+import Link from "next/link"
+import { updateBookingStatus } from "@/app/actions/bookingsActions"
+import { format } from "date-fns"
+import { Badge } from "@/components/ui/badge"
+import { DataTable } from "../packages/data-table"
 
 export default function BookingsTable({
   initialBookings,
 }: {
-  initialBookings: Booking[];
+  initialBookings: Booking[]
 }) {
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  const [bookings, setBookings] = useState<Booking[]>(initialBookings)
 
   const getStatusBadge = (status: BookingStatus) => {
     const variants = {
@@ -24,54 +23,63 @@ export default function BookingsTable({
       CONFIRMED: "default",
       COMPLETED: "default",
       CANCELLED: "destructive",
-    } as const;
-    return <Badge variant={variants[status]}>{status}</Badge>;
-  };
+    } as const
+    return <Badge variant={variants[status]}>{status}</Badge>
+  }
 
-  const columns: ColumnDef<Booking>[] = [
+  const columns = [
     {
-      accessorKey: "customerName",
-      header: "Customer",
+      key: "customerName" as keyof Booking,
+      label: "Customer",
+      sortable: true,
     },
     {
-      accessorKey: "package.name",
-      header: "Package",
+      key: "package" as keyof Booking,
+      label: "Package",
+      render: (value: Booking["package"]) => value.name,
     },
     {
-      accessorKey: "date",
-      header: "Date",
-      cell: ({ row }) => format(new Date(row.original.date), "PPP"),
+      key: "date" as keyof Booking,
+      label: "Date",
+      sortable: true,
+      render: (value: Booking["date"]) => format(new Date(value), "PPP"),
     },
     {
-      accessorKey: "timeSlot",
-      header: "Time",
-      cell: ({ row }) => `${row.original.timeSlot?.startTime} - ${row.original.timeSlot?.endTime}`,
+      key: "timeSlot" as keyof Booking,
+      label: "Time",
+      render: (value: Booking["timeSlot"]) => `${value?.startTime} - ${value?.endTime}`,
     },
     {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => getStatusBadge(row.original.status),
+      key: "status" as keyof Booking,
+      label: "Status",
+      sortable: true,
+      render: (value: Booking["status"]) => getStatusBadge(value),
     },
     {
-      id: "actions",
-      cell: ({ row }) => (
+      key: "totalPrice" as keyof Booking,
+      label: "Total Price",
+      sortable: true,
+      render: (value: Booking["totalPrice"]) => <span className="font-medium">${value.toFixed(2)}</span>,
+    },
+    {
+      key: "id" as keyof Booking,
+      label: "Actions",
+      render: (value: Booking["id"], booking: Booking) => (
         <div className="flex items-center gap-2">
-          <Link href={`/admin/bookings/${row.original.id}`}>
+          <Link href={`/admin/bookings/${booking.id}`}>
             <Button variant="outline" size="sm">
               <Eye className="w-4 h-4 mr-2" />
               View
             </Button>
           </Link>
-          {row.original.status === "PENDING" && (
+          {booking.status === "PENDING" && (
             <>
               <Button
                 variant="default"
                 size="sm"
                 onClick={async () => {
-                  const updated = await updateBookingStatus(row.original.id!, "CONFIRMED");
-                  setBookings(bookings.map(b => 
-                    b.id === updated.id ? updated : b
-                  ));
+                  const updated = await updateBookingStatus(booking.id!, "CONFIRMED")
+                  setBookings(bookings.map((b) => (b.id === updated.id ? updated : b)))
                 }}
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
@@ -81,10 +89,8 @@ export default function BookingsTable({
                 variant="destructive"
                 size="sm"
                 onClick={async () => {
-                  const updated = await updateBookingStatus(row.original.id!, "CANCELLED");
-                  setBookings(bookings.map(b => 
-                    b.id === updated.id ? updated : b
-                  ));
+                  const updated = await updateBookingStatus(booking.id!, "CANCELLED")
+                  setBookings(bookings.map((b) => (b.id === updated.id ? updated : b)))
                 }}
               >
                 <XCircle className="w-4 h-4 mr-2" />
@@ -95,14 +101,8 @@ export default function BookingsTable({
         </div>
       ),
     },
-  ];
+  ]
 
-  return (
-    <DataTable
-      columns={columns}
-      data={bookings}
-      filterColumn="customerName"
-      filterPlaceholder="Filter bookings..."
-    />
-  );
+  return <DataTable columns={columns} data={bookings} />
 }
+

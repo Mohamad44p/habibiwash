@@ -16,6 +16,38 @@ export async function validateTimeSlot(date: Date, time: string) {
   return !existingBooking;
 }
 
+async function calculateTotalPrice(data: BookingData): Promise<number> {
+  try {
+    // Get selected subpackage price based on vehicle type
+    const subPackage = data.selectedPackage?.subPackages.find(
+      (sp) => sp.id === data.selectedSubPackage
+    );
+    
+    const basePrice = subPackage?.prices.find(
+      (p) => p.vehicleType.toLowerCase() === data.vehicleType?.toLowerCase()
+    )?.price || 0;
+
+    // Get add-ons prices directly from the database
+    const addOnsTotal = data.selectedAddOns?.length 
+      ? await db.addOn.findMany({
+          where: {
+            id: {
+              in: data.selectedAddOns
+            }
+          },
+          select: {
+            price: true
+          }
+        }).then(addOns => addOns.reduce((sum, addon) => sum + addon.price, 0))
+      : 0;
+
+    return basePrice + addOnsTotal;
+  } catch (error) {
+    console.error('Error calculating total price:', error);
+    throw error;
+  }
+}
+
 export async function createBooking(data: BookingData) {
   try {
     // Validate time slot availability
@@ -23,6 +55,9 @@ export async function createBooking(data: BookingData) {
     if (!isAvailable) {
       throw new Error("This time slot is no longer available");
     }
+
+    // Calculate total price
+    const totalPrice = await calculateTotalPrice(data);
 
     // Create time slot and booking in a transaction
     const booking = await db.$transaction(async (tx) => {
@@ -58,6 +93,7 @@ export async function createBooking(data: BookingData) {
           customerEmail: data.customerInfo?.email ?? '',
           customerPhone: data.customerInfo?.phone ?? '',
           notes: data.customerInfo?.notes ?? '',
+          totalPrice: totalPrice, // Add the calculated total price
         },
       });
     });

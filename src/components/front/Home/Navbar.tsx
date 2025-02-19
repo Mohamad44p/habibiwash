@@ -40,10 +40,10 @@ export default function Navbar() {
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/Logo1.png"
+              src="/logo2.png"
               alt="ChainSwitch"
-              width={150}
-              height={150}
+              width={85}
+              height={85}
               className="rounded-full object-cover"
             />
           </Link>

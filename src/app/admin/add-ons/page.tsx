@@ -10,9 +10,11 @@ export default async function AddOnsPage() {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">Add-ons Management</h1>
-      <Link href="/admin/add-ons/create">
+       <div className="py-5">
+       <Link href="/admin/add-ons/create">
         <Button>Create New Add-on</Button>
       </Link>
+       </div>
       <Suspense fallback={<div>Loading...</div>}>
         <AddOnsTable initialAddOns={addOns} />
       </Suspense>

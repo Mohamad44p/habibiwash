@@ -19,10 +19,10 @@ model Package {
   id          String       @id @default(cuid())
   name        String
   image       String?
-  featured    Boolean      @default(false) // Add featured field
-  basePrice   Float        @default(0) // Add base price
+  featured    Boolean      @default(false)
+  basePrice   Float        @default(0) 
   subPackages SubPackage[]
-  addOns      AddOn[]     @relation("PackageAddOns") // Add this line
+  addOns      AddOn[]     @relation("PackageAddOns")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   Booking     Booking[]
@@ -33,7 +33,7 @@ model SubPackage {
   name        String
   description String
   prices      Price[]
-  duration    Int // in minutes
+  duration    Int 
   packageId   String
   package     Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -43,7 +43,7 @@ model SubPackage {
 
 model Price {
   id           String      @id @default(cuid())
-  vehicleType  VehicleType // Change to enum
+  vehicleType  VehicleType 
   price        Float
   subPackageId String
   subPackage   SubPackage @relation(fields: [subPackageId], references: [id], onDelete: Cascade)
@@ -67,6 +67,7 @@ model Booking {
   customerPhone String
   notes         String?
   status        BookingStatus @default(PENDING)
+  totalPrice    Float         @default(0)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
@@ -76,9 +77,9 @@ model AddOn {
   name        String
   description String
   price       Float
-  icon        String    // Make sure this line is present
+  icon        String 
   bookings    Booking[]
-  packages    Package[] @relation("PackageAddOns") // Add this line
+  packages    Package[] @relation("PackageAddOns") 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @default(now())
 }
