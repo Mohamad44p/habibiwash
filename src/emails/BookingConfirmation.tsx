@@ -28,23 +28,27 @@ export default function BookingConfirmationEmail({
   // Get base package price and info
   const selectedPackage = booking.selectedPackage;
   const selectedSubPackage = selectedPackage?.subPackages.find(
-    sp => sp.id === booking.selectedSubPackage
+    (sp) => sp.id === booking.selectedSubPackage
   );
-  const basePrice = selectedSubPackage?.prices.find(
-    p => p.vehicleType.toLowerCase() === booking.vehicleType?.toLowerCase()
-  )?.price || 0;
+  const basePrice =
+    selectedSubPackage?.prices.find(
+      (p) => p.vehicleType.toLowerCase() === booking.vehicleType?.toLowerCase()
+    )?.price || 0;
 
   // Get selected add-ons with prices
   const selectedAddOns = (booking.selectedPackage?.addOns || [])
-    .filter(addon => booking.selectedAddOns?.includes(addon.id))
-    .map(addon => ({
+    .filter((addon) => booking.selectedAddOns?.includes(addon.id))
+    .map((addon) => ({
       id: addon.id,
       name: addon.name,
-      price: addon.price
+      price: addon.price,
     }));
 
   // Calculate add-ons total
-  const addOnsTotal = selectedAddOns.reduce((total, addon) => total + addon.price, 0);
+  const addOnsTotal = selectedAddOns.reduce(
+    (total, addon) => total + addon.price,
+    0
+  );
 
   return (
     <Html>
@@ -58,7 +62,7 @@ export default function BookingConfirmationEmail({
         <Container style={container}>
           <Section style={logoSection}>
             <Img
-              src="https://www.habibiwash.com/_next/image?url=%2FLogo1.png&w=256&q=75"
+              src="https://www.habibiwash.com/_next/image?url=%2Fhabibi.png&w=256&q=75"
               width="200"
               height="67"
               alt="HabibiWash Logo"
@@ -75,7 +79,8 @@ export default function BookingConfirmationEmail({
           {isAdminNotification && (
             <Section style={section}>
               <Text style={value}>
-                A new booking has been received from {booking.customerInfo?.name}.
+                A new booking has been received from{" "}
+                {booking.customerInfo?.name}.
               </Text>
             </Section>
           )}
@@ -88,7 +93,9 @@ export default function BookingConfirmationEmail({
                   {selectedPackage?.name}
                   {selectedSubPackage && ` - ${selectedSubPackage.name}`}
                 </Text>
-                <Text style={subValue}>Base Price: ${basePrice.toFixed(2)}</Text>
+                <Text style={subValue}>
+                  Base Price: ${basePrice.toFixed(2)}
+                </Text>
               </Column>
             </Row>
 
@@ -106,7 +113,9 @@ export default function BookingConfirmationEmail({
             <Row style={row}>
               <Column>
                 <Text style={label}>Vehicle Type</Text>
-                <Text style={{ ...value, textTransform: 'capitalize' as const }}>
+                <Text
+                  style={{ ...value, textTransform: "capitalize" as const }}
+                >
                   {booking.vehicleType}
                 </Text>
               </Column>
@@ -117,12 +126,17 @@ export default function BookingConfirmationEmail({
                 <Column>
                   <Text style={label}>Selected Add-ons</Text>
                   <div style={addonsContainer}>
-                    {selectedAddOns.map((addon) => addon && (
-                      <Text key={addon.id} style={addonItem}>
-                        <span style={addonName}>• {addon.name}</span>
-                        <span style={addonPrice}>${addon.price.toFixed(2)}</span>
-                      </Text>
-                    ))}
+                    {selectedAddOns.map(
+                      (addon) =>
+                        addon && (
+                          <Text key={addon.id} style={addonItem}>
+                            <span style={addonName}>• {addon.name}</span>
+                            <span style={addonPrice}>
+                              ${addon.price.toFixed(2)}
+                            </span>
+                          </Text>
+                        )
+                    )}
                   </div>
                 </Column>
               </Row>
@@ -134,15 +148,17 @@ export default function BookingConfirmationEmail({
                 <div style={priceGrid}>
                   <Text style={summaryItem}>Base Package:</Text>
                   <Text style={summaryPrice}>${basePrice.toFixed(2)}</Text>
-                  
+
                   {selectedAddOns.length > 0 && (
                     <>
                       <Text style={summaryItem}>Add-ons Total:</Text>
-                      <Text style={summaryPrice}>${addOnsTotal.toFixed(2)}</Text>
-                      
+                      <Text style={summaryPrice}>
+                        ${addOnsTotal.toFixed(2)}
+                      </Text>
+
                       <Text style={summaryItem}>Add-ons Detail:</Text>
                       <div style={addonsList}>
-                        {selectedAddOns.map(addon => (
+                        {selectedAddOns.map((addon) => (
                           <Text key={addon.id} style={addonDetail}>
                             {addon.name}: ${addon.price.toFixed(2)}
                           </Text>
@@ -150,7 +166,7 @@ export default function BookingConfirmationEmail({
                       </div>
                     </>
                   )}
-                  
+
                   <Text style={totalLabel}>Total Amount:</Text>
                   <Text style={totalPriceStyle}>${totalPrice.toFixed(2)}</Text>
                 </div>
@@ -171,15 +187,13 @@ export default function BookingConfirmationEmail({
           </Section>
 
           <Section style={footer}>
-            <Text style={footerText}>
-              Thank you for choosing HabibiWash!
-            </Text>
+            <Text style={footerText}>Thank you for choosing HabibiWash!</Text>
             <Text style={contactText}>
               Need to make changes? Contact us at:
               <br />
               Email: habibiwash99@gmail.com
               <br />
-              Phone: 9452166478
+              Phone: +1 (945)-309-0185
             </Text>
           </Section>
         </Container>
@@ -328,14 +342,14 @@ const totalLabel = {
 };
 
 const sectionHeaderStyle = {
-  fontSize: '18px',
-  fontWeight: '600',
-  color: '#1a1a1a',
-  marginBottom: '16px',
+  fontSize: "18px",
+  fontWeight: "600",
+  color: "#1a1a1a",
+  marginBottom: "16px",
 };
 
 const customerInfoStyle = {
-  padding: '16px 0',
+  padding: "16px 0",
 };
 
 const totalPriceStyle = {

@@ -12,7 +12,7 @@ async function BookingData() {
 
 export default function BookingPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-background/95 py-12">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-background/95">
       <Suspense fallback={<BookingFlowSkeleton />}>
         <BookingData />
       </Suspense>
