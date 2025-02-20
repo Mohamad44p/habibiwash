@@ -42,7 +42,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Image
-              src="/logo2.png"
+              src="/habibi.png"
               alt="ChainSwitch"
               width={65}
               height={65}

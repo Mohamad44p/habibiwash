@@ -6,7 +6,6 @@ import {
   Facebook,
   Instagram,
   Mail,
-  MapPin,
   Phone,
 } from "lucide-react";
 import Image from "next/image";
@@ -25,7 +24,7 @@ const Footer = () => {
               className="block sm:inline-block text-center sm:text-left"
             >
               <Image
-                src="/Logo1.png"
+                src="/habibi.png"
                 alt="HabibiWash"
                 width={120}
                 height={120}
@@ -83,12 +82,8 @@ const Footer = () => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-6">Contact Info</h3>
+              <h3 className="text-lg font-semibold mb-6 mt-2">Contact Info</h3>
               <ul className="space-y-4">
-                <li className="flex items-center text-sm text-muted-foreground">
-                  <MapPin className="h-5 w-5 mr-3 text-primary" />
-                  123 Detailing Street, Dubai, UAE
-                </li>
                 <li className="flex items-center text-sm text-muted-foreground">
                   <Phone className="h-5 w-5 mr-3 text-primary" />
                   9452166478
