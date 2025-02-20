@@ -63,24 +63,28 @@ export default function Hero() {
             <div className="relative lg:hidden mb-8">
               <div className="aspect-video rounded-2xl overflow-hidden">
                 <Image
-                  src="/HeroImage.jpg"
+                  src="/car.png"
                   alt="Car Wash"
                   fill
                   className="object-cover"
                   priority
+                  quality={100}
                 />
               </div>
             </div>
             <div className="relative hidden lg:block">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl blur-3xl" />
               <div className="relative bg-card rounded-2xl border p-6 shadow-2xl overflow-hidden">
-                <Image
-                  src="/HeroImage.jpg"
-                  alt="Car Wash"
-                  width={600}
-                  height={400}
-                  className="rounded-lg object-cover mb-6"
-                />
+                <div className="flex justify-center translate-x-12">
+                  <Image
+                    src="/car.png"
+                    alt="Car Wash"
+                    width={600}
+                    height={400}
+                    quality={100}
+                    className="rounded-lg object-cover mb-6"
+                  />
+                </div>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">

@@ -1,335 +1,213 @@
 "use client";
 
-import { useState } from "react";
-import { Check } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "motion/react";
 
-interface ServicePackage {
-  name: string;
-  description: string;
-  basePrice: number;
-  addOns: string[];
-  features: {
-    interior?: string[];
-    exterior?: string[];
-  };
-  popular?: boolean;
+import type { Package } from "@/types/package";
+import { VehicleType } from "@prisma/client";
+
+interface ServiceTabsProps {
+  packages: Package[];
 }
 
-export default function ServiceTabs() {
-  const [selectedTab, setSelectedTab] = useState("interior-exterior");
-  const [xlVehicles, setXlVehicles] = useState<Record<string, boolean>>({});
+const AnimatedPrice = ({ price }: { price: number }) => {
+  const [displayPrice, setDisplayPrice] = useState(price);
 
-  const services: Record<string, ServicePackage[]> = {
-    "interior-exterior": [
-      {
-        name: "Express Clean",
-        description:
-          "Our 60-90 minute detail. Designed for well-maintained vehicles that need a light detail.",
-        basePrice: 198,
-        addOns: ["Pet Hair Removal ($29-69)", "Clay Bar Treatment ($50)"],
-        features: {
-          interior: [
-            "Wipe & Clean All Surfaces",
-            "Vacuum Interior",
-            "Clean Windows & Mirrors",
-            "Clean Floor Mats & Carpets",
-            "Air Freshener Treatment",
-            "Detail Trunk",
-          ],
-          exterior: [
-            "Professional Hand Wash",
-            "Clean & Wash Wheel Wells",
-            "Detail Rim Faces & Tires",
-            "Dress Exterior Trim/Tires",
-            "Clean Door Jams",
-            "Clean Windows",
-          ],
-        },
-      },
-      {
-        name: "Gold (The Standard)",
-        description:
-          "Our most popular package. A thorough interior & exterior detail for your vehicle.",
-        basePrice: 268,
-        popular: true,
-        addOns: ["Shampoo Seats ($50)", "Shampoo Carpets ($50)"],
-        features: {
-          interior: [
-            "Wipe & Clean All Surfaces",
-            "Double Vacuum Interior",
-            "Steam Clean Full Interior",
-            "Clean Crevices, Vents, Cup Holders, Etc..",
-            "Clean & Protect Plastic",
-            "Clean Windows & Mirrors",
-            "Leather Conditioner Treatment",
-            "Deep Clean Floor Mats & Carpets",
-            "Air Freshener Treatment",
-            "Detail Trunk",
-          ],
-          exterior: [
-            "Professional Hand Wash",
-            "Paint Decontamination (Clay Bar)",
-            "Clean & Wash Wheel Wells",
-            "Detail Rim Faces & Tires",
-            "Dress Exterior Trim/Tires",
-            "Clean Door Jams",
-            "Clean Windows",
-            "Wax Protection (30 Days)",
-          ],
-        },
-      },
-      {
-        name: "Diamond (The Works)",
-        description:
-          "Is your car in need of a full in-depth makeover? This is the package to get your car looking like new again.",
-        basePrice: 468,
-        addOns: ["Headlight Restoration ($100)", "Engine Bay ($60)"],
-        features: {
-          interior: [
-            "Deep Clean All Surfaces",
-            "Double Vacuum Interior",
-            "Shampoo Carpets & Seats",
-            "Steam Clean Full Interior",
-            "Clean Crevices, Vents, Cup Holders, Etc..",
-            "Clean & Protect Plastic",
-            "Leather Conditioner Treatment",
-            "Clean Windows & Mirrors",
-            "Deep Clean Floor Mats & Carpets",
-            "Air Freshener Treatment",
-            "Detail Trunk",
-          ],
-          exterior: [
-            "Wax & Buff (1-Step Paint Polish)",
-            "Light Swirl Removal (Spot Polish)",
-            "Professional Hand Wash",
-            "Paint Decontamination (Clay Bar)",
-            "Detail Rim Faces & Tires",
-            "Clean & Wash Wheel Wells",
-            "Dress Exterior Trim/Tires",
-            "Clean Door Jams",
-            "Detail Windows",
-            "Ceramic Protection (6 mon)",
-          ],
-        },
-      },
-    ],
-    "interior-only": [
-      {
-        name: "Interior Express Clean",
-        description: "Quick interior refresh for well-maintained vehicles.",
-        basePrice: 149,
-        addOns: ["Pet Hair Removal ($29-69)"],
-        features: {
-          interior: [
-            "Wipe & Clean All Surfaces",
-            "Vacuum Interior",
-            "Clean Windows & Mirrors",
-            "Clean Floor Mats & Carpets",
-            "Air Freshener Treatment",
-            "Detail Trunk",
-          ],
-        },
-      },
-    ],
-    "exterior-only": [
-      {
-        name: "Exterior Express Clean",
-        description: "Professional exterior cleaning and protection.",
-        basePrice: 129,
-        addOns: ["Clay Bar Treatment ($50)"],
-        features: {
-          exterior: [
-            "Professional Hand Wash",
-            "Clean & Wash Wheel Wells",
-            "Detail Rim Faces & Tires",
-            "Dress Exterior Trim/Tires",
-            "Clean Door Jams",
-            "Clean Windows",
-          ],
-        },
-      },
-    ],
-  };
+  useEffect(() => {
+    const duration = 500; // ms
+    const steps = 20;
+    const stepDuration = duration / steps;
+    const increment = (price - displayPrice) / steps;
 
-  const calculatePrice = (basePrice: number, packageId: string) => {
-    return xlVehicles[packageId] ? basePrice + 30 : basePrice;
-  };
+    let currentStep = 0;
 
-  const toggleXlVehicle = (packageId: string) => {
-    setXlVehicles((prev) => ({ ...prev, [packageId]: !prev[packageId] }));
+    const timer = setInterval(() => {
+      currentStep++;
+      setDisplayPrice((prev) => {
+        const newPrice = prev + increment;
+        return currentStep === steps ? price : Number(newPrice.toFixed(2));
+      });
+
+      if (currentStep === steps) {
+        clearInterval(timer);
+      }
+    }, stepDuration);
+
+    return () => clearInterval(timer);
+  }, [price, displayPrice]);
+
+  return (
+    <span className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+      ${displayPrice.toFixed(2)}
+    </span>
+  );
+};
+
+export default function ServiceTabs({ packages }: ServiceTabsProps) {
+  const [selectedTab, setSelectedTab] = useState(packages[0]?.id || "");
+  const [selectedVehicleType, setSelectedVehicleType] = useState<VehicleType>(
+    VehicleType.SEDAN
+  );
+
+  const currentPackage = packages.find((pkg) => pkg.id === selectedTab);
+
+  const getPrice = (
+    prices: { vehicleType: string; price: number }[],
+    type: VehicleType
+  ) => {
+    return prices.find((p) => p.vehicleType === type)?.price || 0;
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4">
-      <div className="text-center mb-8 sm:mb-16">
-        <Badge className="inline-block bg-black text-white rounded-full px-4 py-1 text-sm font-medium mb-4">
+    <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center mb-16"
+      >
+        <Badge className="inline-block bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium mb-4">
           Pricing
         </Badge>
-        <h2 className="text-4xl md:text-5xl font-bold mb-4">
-          Book a detail online in minutes
+        <h2 className="text-4xl md:text-6xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+          Choose Your Perfect Detail Package
         </h2>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Simple and transparent pricing is what we do. No hidden costs or fees
-          ever.
+          Transparent pricing, exceptional service. No hidden fees, just
+          sparkling results.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="flex justify-center mb-8 sm:mb-12 overflow-x-auto pb-4 sm:pb-0">
-        <div className="inline-flex rounded-full bg-muted/30 p-1.5 min-w-full sm:min-w-0">
-          {Object.keys(services).map((key) => (
-            <button
-              key={key}
-              onClick={() => setSelectedTab(key)}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex justify-center mb-12 overflow-x-auto pb-4 sm:pb-0"
+      >
+        <div className="inline-flex rounded-full bg-muted p-2 min-w-full sm:min-w-0 shadow-lg">
+          {packages.map((pkg) => (
+            <motion.button
+              key={pkg.id}
+              onClick={() => setSelectedTab(pkg.id)}
               className={cn(
-                "flex-1 sm:flex-none px-3 sm:px-6 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap",
-                selectedTab === key
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                "flex-1 sm:flex-none px-4 sm:px-8 py-3 rounded-full text-sm font-medium transition-all whitespace-nowrap",
+                selectedTab === pkg.id
+                  ? "bg-background text-foreground shadow-lg"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 300, damping: 15 }}
             >
-              {key
-                .split("-")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}
-            </button>
+              {pkg.name}
+            </motion.button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      {Object.entries(services).map(([key, packages]) => (
-        <div
-          key={key}
-          className={cn(
-            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto transition-all duration-300",
-            selectedTab === key ? "grid" : "hidden"
-          )}
-        >
-          {packages.map((pkg, index) => {
-            const packageId = `${key}-${index}`;
-            return (
-              <Card
-                key={packageId}
-                className={cn(
-                  "relative overflow-hidden border transition-all duration-300 hover:shadow-lg",
-                  pkg.popular
-                    ? "border-primary shadow-md"
-                    : "hover:border-primary/50"
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <AnimatePresence>
+          {currentPackage?.subPackages.map((subPkg, index) => (
+            <motion.div
+              key={subPkg.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="relative h-full flex flex-col overflow-hidden group hover:shadow-2xl transition-shadow duration-300">
+                {index === 1 && (
+                  <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 text-sm font-semibold z-10">
+                    Most Popular
+                  </Badge>
                 )}
-              >
-                {pkg.popular && (
-                  <div className="absolute top-0 right-0 w-20 h-20">
-                    <div className="absolute transform rotate-45 bg-primary text-primary-foreground font-medium py-1 right-[-35px] top-[32px] w-[170px] text-center text-sm">
-                      Most Popular
-                    </div>
+                {subPkg.image && (
+                  <div className="relative h-48 overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{ backgroundImage: `url(${subPkg.image})` }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
                   </div>
                 )}
-                <CardContent className="p-6">
-                  <div className="min-h-[500px]">
-                    <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                    <p className="text-muted-foreground mb-6">
-                      {pkg.description}
-                    </p>
 
-                    <div className="bg-muted/50 rounded-lg p-4 mb-6">
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">
-                            Starting at
-                          </p>
-                          <motion.div
-                            key={calculatePrice(pkg.basePrice, packageId)}
-                            initial={{ scale: 1 }}
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 0.3 }}
-                            className="text-4xl font-bold"
-                          >
-                            ${calculatePrice(pkg.basePrice, packageId)}
-                          </motion.div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Switch
-                            id={`xl-upgrade-${packageId}`}
-                            checked={xlVehicles[packageId] || false}
-                            onCheckedChange={() => toggleXlVehicle(packageId)}
-                          />
-                          <Label
-                            htmlFor={`xl-upgrade-${packageId}`}
-                            className="text-sm"
-                          >
-                            XL Vehicle
-                            <span className="block text-muted-foreground">
-                              +$30
-                            </span>
-                          </Label>
-                        </div>
-                      </div>
+                <CardHeader className="relative z-10 -mt-16 text-center">
+                  <div className="bg-background/80 backdrop-blur-sm rounded-lg p-4 shadow-lg">
+                    <h3 className="text-2xl font-bold mb-2">{subPkg.name}</h3>
+                    <AnimatedPrice
+                      price={getPrice(subPkg.prices, selectedVehicleType)}
+                    />
+                    <div className="flex items-center justify-center gap-2 text-muted-foreground mt-2">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>{subPkg.duration} minutes</span>
                     </div>
-
-                    {pkg.addOns.length > 0 && (
-                      <div className="mb-6">
-                        <h4 className="font-semibold mb-2">Popular Add-Ons:</h4>
-                        <ul className="text-muted-foreground space-y-1">
-                          {pkg.addOns.map((addon, i) => (
-                            <li key={i} className="flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 bg-primary/50 rounded-full"></span>
-                              {addon}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {pkg.features.interior && (
-                      <div className="mb-6">
-                        <h4 className="font-semibold mb-2">Interior:</h4>
-                        <ul className="space-y-2">
-                          {pkg.features.interior.map((feature, i) => (
-                            <li key={i} className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-primary/70 flex-shrink-0" />
-                              <span className="text-sm">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {pkg.features.exterior && (
-                      <div className="mb-6">
-                        <h4 className="font-semibold mb-2">Exterior:</h4>
-                        <ul className="space-y-2">
-                          {pkg.features.exterior.map((feature, i) => (
-                            <li key={i} className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-primary/70 flex-shrink-0" />
-                              <span className="text-sm">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    <Select
+                      value={selectedVehicleType}
+                      onValueChange={(value) =>
+                        setSelectedVehicleType(value as VehicleType)
+                      }
+                    >
+                      <SelectTrigger className="w-full bg-background/50 backdrop-blur-sm border-primary/20 mt-4">
+                        <SelectValue placeholder="Select vehicle type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(VehicleType).map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+                </CardHeader>
+
+                <CardContent className="flex-1 pt-6">
+                  <div
+                    className="prose prose-sm dark:prose-invert max-w-none [&>ul]:mt-2 [&>ul]:space-y-1 [&>h4]:font-bold [&>h4]:text-base [&>ul>li>ul]:ml-4 [&>ul>li>ul]:mt-1 [&>ul>li>ul]:space-y-1"
+                    dangerouslySetInnerHTML={{ __html: subPkg.description }}
+                  />
                 </CardContent>
 
-                <CardFooter className="p-6 pt-0 absolute bottom-0 left-0 right-0">
-                  <Button
-                    className="w-full"
-                    variant={pkg.popular ? "default" : "outline"}
-                    size="lg"
-                  >
-                    Schedule Online
+                <CardFooter className="pt-6">
+                  <Button className="w-full" size="lg">
+                    Book Now
                   </Button>
                 </CardFooter>
               </Card>
-            );
-          })}
-        </div>
-      ))}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

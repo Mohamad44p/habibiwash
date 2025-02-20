@@ -1,6 +1,6 @@
-import Image from "next/image"
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid"
-import { Sparkles, PaintBucket, Shield, Calendar } from "lucide-react"
+import Image from "next/image";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Sparkles, PaintBucket, Shield, Calendar } from "lucide-react";
 
 export default function WhatWeOffer() {
   return (
@@ -8,10 +8,13 @@ export default function WhatWeOffer() {
       <div className="text-center mb-8 sm:mb-12">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter md:text-5xl lg:text-6xl">
           What We{" "}
-          <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Offer</span>
+          <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Offer
+          </span>
         </h2>
         <p className="mt-4 text-base sm:text-xl text-muted-foreground">
-          Experience our premium car care services tailored to elevate your vehicle&apos;s appearance and protection
+          Experience our premium car care services tailored to elevate your
+          vehicle&apos;s appearance and protection
         </p>
       </div>
       <BentoGrid className="max-w-5xl mx-auto md:auto-rows-[20rem] lg:auto-rows-[24rem] gap-3 sm:gap-4">
@@ -27,13 +30,13 @@ export default function WhatWeOffer() {
         ))}
       </BentoGrid>
     </section>
-  )
+  );
 }
 
 const ImageBackground = ({ src, alt }: { src: string; alt: string }) => (
   <div className="relative w-full h-full overflow-hidden rounded-xl">
     <Image
-      src={src || "/images/Car2.jpg"}
+      src={src || "/images/Carwash.jpg"}
       alt={alt}
       fill
       quality={100}
@@ -41,24 +44,32 @@ const ImageBackground = ({ src, alt }: { src: string; alt: string }) => (
     />
     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" />
   </div>
-)
+);
 
 const VideoBackground = () => (
   <div className="relative w-full h-full overflow-hidden rounded-xl">
-    <video className="absolute top-0 left-0 w-full h-full object-cover" autoPlay loop muted playsInline>
-      <source src="/video1.mp4" type="video/mp4" />
+    <video
+      className="absolute top-0 left-0 w-full h-full object-cover"
+      autoPlay
+      loop
+      muted
+      playsInline
+    >
+      <source src="/videos/Carwash.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" />
   </div>
-)
+);
 
 const items = [
   {
     title: "Car Wash & Detailing",
     description:
       "Comprehensive interior and exterior cleaning, including engine bay and pet hair removal. We ensure your vehicle looks and feels brand new, inside and out.",
-    header: <ImageBackground src="/images/Car2.jpg" alt="Car Wash & Detailing" />,
+    header: (
+      <ImageBackground src="/images/Carwash.jpg" alt="Car Wash & Detailing" />
+    ),
     className: "md:col-span-2",
     icon: <Sparkles className="h-4 w-4 text-primary" />,
   },
@@ -66,7 +77,12 @@ const items = [
     title: "Paint Correction & Restoration",
     description:
       "Advanced paint correction to remove scratches, swirl marks, and oxidation. We use clay bar treatment, expert polishing, and waxing for a flawless, mirror-like finish.",
-    header: <ImageBackground src="/images/Car3.jpg" alt="Paint Correction & Restoration" />,
+    header: (
+      <ImageBackground
+        src="/images/Paintcorrectio.jpg"
+        alt="Paint Correction & Restoration"
+      />
+    ),
     className: "md:col-span-1",
     icon: <PaintBucket className="h-4 w-4 text-primary" />,
   },
@@ -74,7 +90,9 @@ const items = [
     title: "Ceramic Coating",
     description:
       "Cutting-edge ceramic coating for superior protection. Creates a durable, hydrophobic layer that repels contaminants, enhances gloss, and provides long-lasting, showroom-quality shine.",
-    header: <ImageBackground src="/images/Car4.jpg" alt="Ceramic Coating" />,
+    header: (
+      <ImageBackground src="/images/Ceramiccoating.jpg" alt="Ceramic Coating" />
+    ),
     className: "md:col-span-1",
     icon: <Shield className="h-4 w-4 text-primary" />,
   },
@@ -86,5 +104,4 @@ const items = [
     className: "md:col-span-2",
     icon: <Calendar className="h-4 w-4 text-primary" />,
   },
-]
-
+];

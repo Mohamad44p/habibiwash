@@ -25,7 +25,6 @@ export default function BookingConfirmationEmail({
   totalPrice,
   isAdminNotification = false,
 }: BookingConfirmationEmailProps) {
-  // Get base package price and info
   const selectedPackage = booking.selectedPackage;
   const selectedSubPackage = selectedPackage?.subPackages.find(
     (sp) => sp.id === booking.selectedSubPackage
@@ -35,7 +34,6 @@ export default function BookingConfirmationEmail({
       (p) => p.vehicleType.toLowerCase() === booking.vehicleType?.toLowerCase()
     )?.price || 0;
 
-  // Get selected add-ons with prices
   const selectedAddOns = (booking.selectedPackage?.addOns || [])
     .filter((addon) => booking.selectedAddOns?.includes(addon.id))
     .map((addon) => ({
@@ -44,7 +42,6 @@ export default function BookingConfirmationEmail({
       price: addon.price,
     }));
 
-  // Calculate add-ons total
   const addOnsTotal = selectedAddOns.reduce(
     (total, addon) => total + addon.price,
     0
@@ -63,8 +60,8 @@ export default function BookingConfirmationEmail({
           <Section style={logoSection}>
             <Img
               src="https://www.habibiwash.com/_next/image?url=%2Fhabibi.png&w=256&q=75"
-              width="200"
-              height="67"
+              width="150"
+              height="150"
               alt="HabibiWash Logo"
               style={logo}
             />
@@ -202,7 +199,6 @@ export default function BookingConfirmationEmail({
   );
 }
 
-// Update and add new styles
 const main = {
   backgroundColor: "#f8fafc",
   fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -219,12 +215,15 @@ const container = {
 
 const logoSection = {
   textAlign: "center" as const,
-  padding: "20px 0 40px",
+  padding: "24px 0 32px",
   borderBottom: "1px solid #e6ebf1",
 };
 
 const logo = {
   margin: "0 auto",
+  objectFit: "contain" as const,
+  maxWidth: "150px",
+  display: "block",
 };
 
 const section = {

@@ -1,22 +1,18 @@
 "use client";
 
 import { LucideIcon, Sparkles } from "lucide-react";
-import { AVAILABLE_ICONS} from "@/lib/icons/icons";
+import { AVAILABLE_ICONS } from "@/lib/icons/icons";
 import { AddOn } from "@/types/addOn";
-import { useEffect, useState } from "react";
-import { getAddOns } from "@/app/actions/addOnsActions";
 
-export function ServiceAddOns() {
-  const [addOns, setAddOns] = useState<AddOn[]>([]);
+const ADDON_ITEM_CLASS = "flex items-center justify-between p-2.5 rounded-xl hover:bg-accent/30 group cursor-pointer transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-transparent hover:border-primary/10 bg-background/50";
+const ADDON_ICON_WRAPPER_CLASS = "rounded-full bg-primary/5 p-1.5 group-hover:bg-primary/20 transition-colors duration-300 ring-1 ring-primary/10 group-hover:ring-primary/30";
+const ADDON_PRICE_CLASS = "text-sm font-semibold bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent group-hover:scale-105 transition-transform";
 
-  useEffect(() => {
-    const loadAddOns = async () => {
-      const data = await getAddOns();
-      setAddOns(data);
-    };
-    loadAddOns();
-  }, []);
+interface ServiceAddOnsProps {
+  initialAddOns: AddOn[];
+}
 
+export function ServiceAddOns({ initialAddOns }: ServiceAddOnsProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
       <div className="relative overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background rounded-2xl p-4 sm:p-6 shadow-2xl hover:shadow-3xl transition-all duration-500 border border-muted/20">
@@ -41,26 +37,22 @@ export function ServiceAddOns() {
         </div>
 
         <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-x-8 sm:gap-y-2">
-          {addOns.map((addon) => {
+          {initialAddOns.map((addon) => {
             const IconComponent = AVAILABLE_ICONS[addon.icon] as LucideIcon;
             return (
               <div 
                 key={addon.id} 
-                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-accent/30 group cursor-pointer
-                          transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
-                          border border-transparent hover:border-primary/10 bg-background/50"
+                className={ADDON_ITEM_CLASS}
               >
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-primary/5 p-1.5 group-hover:bg-primary/20 transition-colors duration-300
-                               ring-1 ring-primary/10 group-hover:ring-primary/30">
+                  <div className={ADDON_ICON_WRAPPER_CLASS}>
                     {IconComponent && <IconComponent className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />}
                   </div>
                   <span className="text-sm font-medium group-hover:text-primary transition-colors">
                     {addon.name}
                   </span>
                 </div>
-                <span className="text-sm font-semibold bg-gradient-to-r from-primary/90 to-primary/70 
-                               bg-clip-text text-transparent group-hover:scale-105 transition-transform">
+                <span className={ADDON_PRICE_CLASS}>
                   +${addon.price}
                 </span>
               </div>
