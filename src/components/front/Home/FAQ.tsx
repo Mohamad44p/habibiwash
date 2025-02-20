@@ -51,7 +51,7 @@ export default function FAQ() {
           Frequently asked questions
         </h2>
         <p className="text-sm sm:text-base text-muted-foreground dark:text-gray-400">
-          Still have questions? Call or text us at 9452166478
+          Still have questions? Call or text us at +1 (945)-309-0185
         </p>
       </div>
 

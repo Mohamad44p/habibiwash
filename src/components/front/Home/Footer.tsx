@@ -43,7 +43,7 @@ const Footer = () => {
                 <Facebook className="h-5 w-5" />
               </Link>
               <Link
-                href="#"
+                href="https://www.tiktok.com/@habibiwash99?_t=ZP-8tzwbf9Sbyp&_r=1"
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
                 <FaTiktok className="h-5 w-5" />
