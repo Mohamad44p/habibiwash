@@ -108,6 +108,31 @@ model BlockedTime {
   updatedAt DateTime @updatedAt
 }
 
+enum QuoteStatus {
+  PENDING
+  REVIEWED
+  APPROVED
+  REJECTED
+}
+
+model Quote {
+  id                String      @id @default(cuid())
+  firstName         String
+  lastName          String
+  email             String
+  phone             String
+  vehicle           String
+  zipCode           String?
+  exteriorServices  String[]
+  interiorServices  String[]
+  contactMethod     String
+  message           String?
+  newsletter        Boolean     @default(false)
+  status            QuoteStatus @default(PENDING)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
 enum BookingStatus {
   PENDING
   CONFIRMED

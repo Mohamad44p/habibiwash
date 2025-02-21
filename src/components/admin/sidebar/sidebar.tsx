@@ -102,6 +102,9 @@ export default function Sidebar() {
                   <NavItem href="/admin/bookings" icon={Book}>
                     bookings
                   </NavItem>
+                  <NavItem href="/admin/quotes" icon={Book}>
+                    quotes
+                  </NavItem>
                   <NavItem href="/admin/add-ons" icon={Plus}>
                     Add-ons
                   </NavItem>

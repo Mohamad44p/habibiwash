@@ -12,10 +12,12 @@ const navItems = [
   { name: "Home", href: "/" },
   { name: "Book Online", href: "/booking" },
   { name: "Ceramic Coating", href: "/ceramic-coating" },
-  { name: "Car Detailing", href: "/car-detailing" },
   { name: "Get a Quote", href: "/quote" },
   { name: "FAQ", href: "/faq" },
+  { name: "Call Us", href: "tel:+19453090185" },
 ];
+
+const phoneNumber = "+19453090185";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -114,6 +116,11 @@ export default function Navbar() {
             ))}
             <div className="flex items-center space-x-4 pt-2">
               <ThemeToggle />
+              <Link href={`tel:${phoneNumber}`} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full font-medium">
+                  Call Us
+                </Button>
+              </Link>
               <Link href="/booking" className="flex-1">
                 <Button size="sm" className="w-full font-medium">
                   Schedule Online
