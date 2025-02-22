@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from "motion/react";
 
 import type { Package } from "@/types/package";
 import { VehicleType } from "@prisma/client";
+import Link from "next/link";
 
 interface ServiceTabsProps {
   packages: Package[];
@@ -169,7 +170,7 @@ export default function ServiceTabs({ packages }: ServiceTabsProps) {
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span>{subPkg.duration} minutes</span>
+                      <span>{subPkg.duration}</span>
                     </div>
                     <Select
                       value={selectedVehicleType}
@@ -183,7 +184,7 @@ export default function ServiceTabs({ packages }: ServiceTabsProps) {
                       <SelectContent>
                         {Object.values(VehicleType).map((type) => (
                           <SelectItem key={type} value={type}>
-                            {type}
+                            {type === "XL_SUV_TRUCK" ? "XL SUV/Truck" : type}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -199,9 +200,11 @@ export default function ServiceTabs({ packages }: ServiceTabsProps) {
                 </CardContent>
 
                 <CardFooter className="pt-6">
-                  <Button className="w-full" size="lg">
-                    Book Now
-                  </Button>
+                  <Link href="/booking">
+                    <Button className="w-full" size="lg">
+                      Book Now
+                    </Button>
+                  </Link>
                 </CardFooter>
               </Card>
             </motion.div>

@@ -5,19 +5,14 @@ import { Package, PackageFormData, normalizePrismaPackage } from "@/types/packag
 import db from "../db/db";
 import { Prisma, VehicleType } from "@prisma/client";
 
-const packageInclude = Prisma.validator<Prisma.PackageInclude>()({
+const packageInclude = {
   subPackages: {
     include: {
       prices: true,
-      
     },
   },
   addOns: true,
-});
-
-type PackageWithRelations = Prisma.PackageGetPayload<{
-  include: typeof packageInclude;
-}>;
+} satisfies Prisma.PackageInclude;
 
 export async function getPackages(): Promise<Package[]> {
   try {
@@ -26,7 +21,7 @@ export async function getPackages(): Promise<Package[]> {
     });
 
     return packages
-      .map((pkg: PackageWithRelations) => normalizePrismaPackage(pkg))
+      .map((pkg) => normalizePrismaPackage(pkg))
       .filter((pkg): pkg is Package => pkg !== null);
   } catch (error) {
     console.error("Error fetching packages:", error);
@@ -46,7 +41,7 @@ export async function createPackage(data: PackageFormData) {
           create: data.subPackages.map((subPackage) => ({
             name: subPackage.name,
             description: subPackage.description,
-            duration: subPackage.duration,
+            duration: subPackage.duration, // Keep as string, don't convert to number
             image: subPackage.image ?? null,
             prices: {
               create: subPackage.prices.map((price) => ({
@@ -86,7 +81,7 @@ export async function updatePackage(id: string, data: PackageFormData) {
           create: data.subPackages.map((subPackage) => ({
             name: subPackage.name,
             description: subPackage.description,
-            duration: subPackage.duration,
+            duration: subPackage.duration, // Keep as string
             image: subPackage.image ?? null,
             prices: {
               create: subPackage.prices.map((price) => ({

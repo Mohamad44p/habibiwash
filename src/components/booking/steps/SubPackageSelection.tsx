@@ -17,9 +17,9 @@ interface SubPackageSelectionProps {
 }
 
 const vehicleTypes = [
-  { id: "sedan", name: "Sedan", icon: Car },
-  { id: "suv", name: "SUV", icon: CarIcon },
-  { id: "van", name: "Van", icon: Truck },
+  { id: "SEDAN", name: "Sedan", icon: Car },
+  { id: "SUV", name: "SUV", icon: CarIcon },
+  { id: "XL_SUV_TRUCK", name: "XL SUV/Truck", icon: Truck },  // Updated
 ]
 
 export default function SubPackageSelection({
@@ -106,7 +106,7 @@ export default function SubPackageSelection({
                   {/* Duration */}
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Clock className="w-4 h-4" />
-                    <span>{subPkg.duration} minutes</span>
+                    <span>{subPkg.duration}</span>
                   </div>
 
                   {/* Description with proper HTML rendering */}

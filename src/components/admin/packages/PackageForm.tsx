@@ -26,7 +26,7 @@ const subPackageSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, 'Sub package name is required'),
   description: z.string().min(1, 'Description is required'),
-  duration: z.coerce.number().min(1, 'Duration must be at least 1 minute'),
+  duration: z.string().min(1, 'Duration is required'), // Changed validation
   image: z.string().optional().nullable(),
   prices: z.array(priceSchema).min(1, 'At least one price is required'),
 })
@@ -67,7 +67,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
       subPackages: [{
         name: '',
         description: '',
-        duration: 0,
+        duration: '', // Keep as empty string
         prices: [{ vehicleType: VehicleType.SEDAN, price: 0 }],
         image: null
       }],
@@ -193,7 +193,7 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                 onClick={() => subPackagesArray.append({
                   name: '',
                   description: '',
-                  duration: 0,
+                  duration: '', // Keep as empty string
                   prices: [{ vehicleType: VehicleType.SEDAN, price: 0 }],
                   image: ''
                 })}
@@ -238,14 +238,13 @@ export default function PackageForm({ initialData }: { initialData?: Package }) 
                       name={`subPackages.${subPackageIndex}.duration`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="dark:text-gray-200">Duration (minutes)</FormLabel>
+                          <FormLabel className="dark:text-gray-200">Duration</FormLabel>
                           <FormControl>
                             <Input 
-                              type="number" 
-                              min="1"
+                              type="text"
+                              placeholder="e.g. 2-3h, 45min, 1h 30m"
                               className="bg-white dark:bg-[#0F0F12] dark:text-white"
                               {...field}
-                              onChange={(e) => field.onChange(e.target.valueAsNumber)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -336,6 +335,12 @@ function PriceFields({ control, subPackageIndex }: { control: Control<FormValues
     appendPrice({ vehicleType: VehicleType.SEDAN, price: 0 });
   };
 
+  const vehicleTypeOptions = [
+    { value: VehicleType.SEDAN, label: 'Sedan' },
+    { value: VehicleType.SUV, label: 'SUV' },
+    { value: VehicleType.XL_SUV_TRUCK, label: 'XL SUV/Truck' },
+  ];
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -382,9 +387,9 @@ function PriceFields({ control, subPackageIndex }: { control: Control<FormValues
                         className="w-full p-2 border rounded-md dark:bg-[#0F0F12] dark:text-white"
                       >
                         <option value="">Select vehicle type</option>
-                        {Object.values(VehicleType).map((type) => (
-                          <option key={type} value={type}>
-                            {type}
+                        {vehicleTypeOptions.map(({ value, label }) => (
+                          <option key={value} value={value}>
+                            {label}
                           </option>
                         ))}
                       </select>

@@ -12,7 +12,7 @@ export interface SubPackage {
   id: string;
   name: string;
   description: string;
-  duration: number;
+  duration: string;  // Changed from number to string
   image?: string | null;
   prices: Price[];
 }
@@ -40,7 +40,7 @@ export interface PackageFormSubPackage {
   id?: string;
   name: string;
   description: string;
-  duration: number;
+  duration: string;  // Changed from number to string
   image?: string | null;
   prices: PackageFormPrice[];
 }
@@ -74,7 +74,7 @@ type PrismaSubPackage = {
   id: string;
   name: string;
   description: string;
-  duration: number;
+  duration: string;  // Changed from number to string
   packageId: string;
   prices: PrismaPrice[];
   createdAt: Date;
@@ -112,7 +112,7 @@ export function isPrismaPackage(obj: unknown): obj is Package {
       const subPkg = sp as Record<string, unknown>;
       return typeof subPkg.name === 'string' &&
         typeof subPkg.description === 'string' &&
-        typeof subPkg.duration === 'number' &&
+        typeof subPkg.duration === 'string' &&  // Changed from number to string
         Array.isArray(subPkg.prices);
     });
 }

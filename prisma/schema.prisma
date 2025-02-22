@@ -12,7 +12,7 @@ datasource db {
 enum VehicleType {
   SEDAN
   SUV
-  VAN
+  XL_SUV_TRUCK // Changed from VAN
 }
 
 model Package {
@@ -20,9 +20,9 @@ model Package {
   name        String
   image       String?
   featured    Boolean      @default(false)
-  basePrice   Float        @default(0) 
+  basePrice   Float        @default(0)
   subPackages SubPackage[]
-  addOns      AddOn[]     @relation("PackageAddOns")
+  addOns      AddOn[]      @relation("PackageAddOns")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   Booking     Booking[]
@@ -33,7 +33,7 @@ model SubPackage {
   name        String
   description String
   prices      Price[]
-  duration    Int 
+  duration    String // Changed from Int to String
   packageId   String
   package     Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
@@ -43,12 +43,12 @@ model SubPackage {
 
 model Price {
   id           String      @id @default(cuid())
-  vehicleType  VehicleType 
+  vehicleType  VehicleType
   price        Float
   subPackageId String
-  subPackage   SubPackage @relation(fields: [subPackageId], references: [id], onDelete: Cascade)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  subPackage   SubPackage  @relation(fields: [subPackageId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model Booking {
@@ -77,9 +77,9 @@ model AddOn {
   name        String
   description String
   price       Float
-  icon        String 
+  icon        String
   bookings    Booking[]
-  packages    Package[] @relation("PackageAddOns") 
+  packages    Package[] @relation("PackageAddOns")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @default(now())
 }
@@ -94,18 +94,18 @@ model TimeSlot {
   updatedAt DateTime  @default(now())
   Booking   Booking[]
 
-  @@unique([date, startTime]) 
+  @@unique([date, startTime])
 }
 
 model BlockedTime {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   date      DateTime?
   startTime String?
   endTime   String?
-  isFullDay Boolean  @default(false)
+  isFullDay Boolean   @default(false)
   reason    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 enum QuoteStatus {
@@ -116,21 +116,21 @@ enum QuoteStatus {
 }
 
 model Quote {
-  id                String      @id @default(cuid())
-  firstName         String
-  lastName          String
-  email             String
-  phone             String
-  vehicle           String
-  zipCode           String?
-  exteriorServices  String[]
-  interiorServices  String[]
-  contactMethod     String
-  message           String?
-  newsletter        Boolean     @default(false)
-  status            QuoteStatus @default(PENDING)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id               String      @id @default(cuid())
+  firstName        String
+  lastName         String
+  email            String
+  phone            String
+  vehicle          String
+  zipCode          String?
+  exteriorServices String[]
+  interiorServices String[]
+  contactMethod    String
+  message          String?
+  newsletter       Boolean     @default(false)
+  status           QuoteStatus @default(PENDING)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 }
 
 enum BookingStatus {
