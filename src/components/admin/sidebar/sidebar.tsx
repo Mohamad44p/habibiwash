@@ -9,6 +9,7 @@ import {
   Book,
   Package,
   X,
+  Users,
 } from "lucide-react";
 
 import { Home } from "lucide-react";
@@ -93,7 +94,7 @@ export default function Sidebar() {
                   Overview
                 </div>
                 <div className="space-y-1">
-                  <NavItem href="#" icon={Home}>
+                  <NavItem href="/admin" icon={Home}>
                     Dashboard
                   </NavItem>
                   <NavItem href="/admin/packages" icon={Package}>
@@ -108,11 +109,14 @@ export default function Sidebar() {
                   <NavItem href="/admin/add-ons" icon={Plus}>
                     Add-ons
                   </NavItem>
+                  <NavItem href="/admin/testimonials" icon={Users}>
+                    Testimonials
+                  </NavItem>
                   <NavItem href="/admin/time-slots" icon={Clock}>
                     Time-slots
                   </NavItem>
                   <NavItem href="/admin/blocked-times" icon={X}>
-                   Blocked-times
+                    Blocked-times
                   </NavItem>
                 </div>
               </div>

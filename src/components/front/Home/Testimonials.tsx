@@ -7,8 +7,9 @@ import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+// Update the interface to match the database model
 interface Testimonial {
-  id: number;
+  id: string;
   name: string;
   role: string;
   comment: string;
@@ -16,118 +17,7 @@ interface Testimonial {
   service: string;
 }
 
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: "Alex Thompson",
-    role: "BMW M3 Owner",
-    comment:
-      "Exceptional service! My car looks and feels brand new. The attention to detail is unmatched.",
-    rating: 5,
-    service: "Ceramic Coating",
-  },
-  {
-    id: 2,
-    name: "Sarah Martinez",
-    role: "Tesla Model Y Owner",
-    comment:
-      "Outstanding results! The team's expertise and care for my vehicle exceeded all expectations.",
-    rating: 5,
-    service: "Premium Detail",
-  },
-  {
-    id: 3,
-    name: "Michael Chen",
-    role: "Porsche 911 Owner",
-    comment:
-      "Incredible transformation! Years of wear vanished, leaving my car in showroom condition.",
-    rating: 5,
-    service: "Paint Correction",
-  },
-  {
-    id: 4,
-    name: "Emma Wilson",
-    role: "Mercedes AMG Owner",
-    comment:
-      "Meticulous work! Every inch of my car was treated with the utmost care and professionalism.",
-    rating: 5,
-    service: "Full Detail",
-  },
-  {
-    id: 5,
-    name: "David Park",
-    role: "Audi RS7 Owner",
-    comment:
-      "Top-notch protection! The paint protection has kept my car looking flawless for months.",
-    rating: 5,
-    service: "Paint Protection",
-  },
-  {
-    id: 6,
-    name: "Lisa Rodriguez",
-    role: "Range Rover Owner",
-    comment:
-      "Luxurious results! The interior detailing brought new life to my vehicle's cabin.",
-    rating: 5,
-    service: "Interior Detail",
-  },
-  {
-    id: 7,
-    name: "James Mitchell",
-    role: "Lexus LC500 Owner",
-    comment:
-      "Brilliant finish! The ceramic coating has made maintaining my car's appearance effortless.",
-    rating: 5,
-    service: "Ceramic Coating",
-  },
-  {
-    id: 8,
-    name: "Sophie Anderson",
-    role: "McLaren Owner",
-    comment:
-      "Unparalleled quality! Every service has been consistently excellent, truly worth the investment.",
-    rating: 5,
-    service: "Premium Detail",
-  },
-  {
-    id: 9,
-    name: "Robert Zhang",
-    role: "Ferrari Owner",
-    comment:
-      "Flawless results! The paint correction brought out a shine I didn't know my car could have.",
-    rating: 5,
-    service: "Paint Correction",
-  },
-  {
-    id: 10,
-    name: "Nina Patel",
-    role: "Lamborghini Owner",
-    comment:
-      "Exceptional care! From start to finish, the service was impeccable and the results stunning.",
-    rating: 5,
-    service: "Full Detail",
-  },
-  {
-    id: 11,
-    name: "Ethan Lee",
-    role: "Porsche Taycan Owner",
-    comment:
-      "Professional service! The paint protection has kept my car looking showroom-ready.",
-    rating: 5,
-    service: "Paint Protection",
-  },
-  {
-    id: 12,
-    name: "Olivia Brown",
-    role: "BMW X5 Owner",
-    comment:
-      "Spotless interior! The detailing made my car feel brand new and smell fresh.",
-    rating: 5,
-    service: "Interior Detail",
-  },
-];
-
-export default function Testimonials() {
+export default function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [autoplay, setAutoplay] = useState(true);
   const itemsPerPage = 3;

@@ -37,7 +37,7 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
         isScrolled
           ? "bg-background/95 backdrop-blur-md shadow-md py-2"
-          : "bg-background/5 backdrop-blur-sm py-4"
+          : "bg-background/95  py-4"
       }`}
     >
       <nav className="container mx-auto px-4">

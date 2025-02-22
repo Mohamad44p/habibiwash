@@ -2,9 +2,9 @@ import FAQ from "@/components/front/Home/FAQ"
 import Hero from "@/components/front/Home/Hero"
 import { ServiceAddOnsWrapper } from "@/components/front/Home/service-add-ons-wrapper"
 import ServiceTabs from "@/components/front/Home/Service-tabs"
-import Testimonials from "@/components/front/Home/Testimonials"
 import WhatWeOffer from "@/components/front/Home/WhatWeOffer"
 import { getPackages } from "@/app/actions/packagesActions"
+import TestimonialsServer from "@/components/front/Home/TestimonialsServer"
 
 export default async function Home() {
   const packages = await getPackages();
@@ -15,7 +15,7 @@ export default async function Home() {
       <WhatWeOffer/>
       <ServiceTabs packages={packages} />
       <ServiceAddOnsWrapper />
-      <Testimonials />
+      <TestimonialsServer/>
       <FAQ />
     </main>
   )
