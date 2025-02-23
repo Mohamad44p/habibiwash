@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     },
     optimisticClientCache: true,
     webVitalsAttribution: ["CLS", "LCP"],
-    optimizePackageImports: ["@/components/ui", "lodash", "framer-motion"],
+    optimizePackageImports: ["@/components/ui", "recharts", "motion/react"],
     optimizeServerReact: true,
     scrollRestoration: true,
     mdxRs: true,

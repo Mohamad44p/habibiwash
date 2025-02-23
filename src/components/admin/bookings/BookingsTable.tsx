@@ -105,4 +105,3 @@ export default function BookingsTable({
 
   return <DataTable columns={columns} data={bookings} />
 }
-
