@@ -183,6 +183,17 @@ export default function BookingConfirmationEmail({
             </div>
           </Section>
 
+          <Section style={section}>
+            <Text style={sectionHeaderStyle}>Service Address</Text>
+            <div style={customerInfoStyle}>
+              <Text style={value}>{booking.customerInfo?.street}</Text>
+              <Text style={value}>
+                {booking.customerInfo?.city}, {booking.customerInfo?.state} {booking.customerInfo?.zipCode}
+              </Text>
+              <Text style={value}>{booking.customerInfo?.country}</Text>
+            </div>
+          </Section>
+
           <Section style={footer}>
             <Text style={footerText}>Thank you for choosing HabibiWash!</Text>
             <Text style={contactText}>
@@ -190,7 +201,7 @@ export default function BookingConfirmationEmail({
               <br />
               Email: habibiwash99@gmail.com
               <br />
-              Phone: +1 (945)-309-0185
+              Phone: 4696997933
             </Text>
           </Section>
         </Container>

@@ -21,6 +21,10 @@ interface DashboardBooking {
   date: string;
   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
   totalPrice: number;
+  street?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
 }
 
 interface DashboardBookingsTableProps {
@@ -40,6 +44,7 @@ export function DashboardBookingsTable({ bookings }: DashboardBookingsTableProps
               <TableHead>Customer</TableHead>
               <TableHead>Service</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>Address</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
@@ -50,6 +55,11 @@ export function DashboardBookingsTable({ bookings }: DashboardBookingsTableProps
                 <TableCell className="font-medium">{booking.customerName}</TableCell>
                 <TableCell>{booking.package.name}</TableCell>
                 <TableCell>{new Date(booking.date).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {booking.street && booking.city ? 
+                    `${booking.street}, ${booking.city}` : 
+                    "No address provided"}
+                </TableCell>
                 <TableCell>
                   <Badge variant={getStatusVariant(booking.status)}>
                     {booking.status}

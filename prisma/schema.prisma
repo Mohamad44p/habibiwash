@@ -66,6 +66,11 @@ model Booking {
   customerEmail String
   customerPhone String
   notes         String?
+  street        String?
+  city          String?
+  state         String?
+  zipCode       String?
+  country       String?
   status        BookingStatus @default(PENDING)
   totalPrice    Float         @default(0)
   createdAt     DateTime      @default(now())

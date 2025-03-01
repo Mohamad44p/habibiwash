@@ -93,6 +93,11 @@ export async function createBooking(data: BookingData) {
           customerEmail: data.customerInfo?.email ?? '',
           customerPhone: data.customerInfo?.phone ?? '',
           notes: data.customerInfo?.notes ?? '',
+          street: data.customerInfo?.street ?? '',
+          city: data.customerInfo?.city ?? '',
+          state: data.customerInfo?.state ?? '',
+          zipCode: data.customerInfo?.zipCode ?? '',
+          country: data.customerInfo?.country ?? '',
           totalPrice: totalPrice, // Add the calculated total price
         },
       });

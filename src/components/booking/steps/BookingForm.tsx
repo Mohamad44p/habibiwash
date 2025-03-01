@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { motion, AnimatePresence } from "motion/react"
-import { UserIcon, MailIcon, PhoneIcon, MessageSquareIcon, AlertCircle } from "lucide-react"
+import { UserIcon, MailIcon, PhoneIcon, MessageSquareIcon, AlertCircle, HomeIcon } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
 
@@ -27,6 +27,22 @@ const formSchema = z.object({
   phone: z.string()
     .regex(phoneRegex, "Please enter a valid phone number")
     .min(10, "Phone number must be at least 10 digits"),
+  street: z.string()
+    .min(5, "Street address must be at least 5 characters")
+    .max(100, "Street address must be less than 100 characters"),
+  city: z.string()
+    .min(2, "City must be at least 2 characters")
+    .max(50, "City must be less than 50 characters"),
+  state: z.string()
+    .min(2, "State must be at least 2 characters")
+    .max(50, "State must be less than 50 characters"),
+  zipCode: z.string()
+    .min(5, "Zip code must be at least 5 characters")
+    .max(10, "Zip code must be less than 10 characters"),
+  country: z.string()
+    .min(2, "Country must be at least 2 characters")
+    .max(50, "Country must be less than 50 characters")
+    .default("United States"),
   notes: z.string()
     .max(500, "Notes must be less than 500 characters")
     .optional(),
@@ -45,6 +61,11 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
       name: "",
       email: "",
       phone: "",
+      street: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "United States",
       notes: "",
     },
     mode: "onChange",
@@ -191,10 +212,133 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
               </motion.div>
 
               <motion.div
-                key="notes-field"
+                key="address-fields"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                  <HomeIcon className="w-5 h-5 text-primary" />
+                  Address Information
+                </h3>
+                
+                <FormField
+                  control={form.control}
+                  name="street"
+                  render={({ field }) => (
+                    <FormItem className="mb-4">
+                      <FormLabel className="flex items-center gap-2">
+                        Street Address
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="123 Main St" 
+                          {...field} 
+                          className={cn(
+                            "text-lg py-3 md:py-4",
+                            errors.street && "border-destructive focus-visible:ring-destructive"
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="City" 
+                            {...field} 
+                            className={cn(
+                              "text-lg py-3 md:py-4",
+                              errors.city && "border-destructive focus-visible:ring-destructive"
+                            )}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>State</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="State" 
+                            {...field} 
+                            className={cn(
+                              "text-lg py-3 md:py-4",
+                              errors.state && "border-destructive focus-visible:ring-destructive"
+                            )}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2 mt-4">
+                  <FormField
+                    control={form.control}
+                    name="zipCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Zip Code</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="12345" 
+                            {...field} 
+                            className={cn(
+                              "text-lg py-3 md:py-4",
+                              errors.zipCode && "border-destructive focus-visible:ring-destructive"
+                            )}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="country"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Country" 
+                            {...field} 
+                            className={cn(
+                              "text-lg py-3 md:py-4",
+                              errors.country && "border-destructive focus-visible:ring-destructive"
+                            )}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div
+                key="notes-field"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
               >
                 <FormField
                   control={form.control}

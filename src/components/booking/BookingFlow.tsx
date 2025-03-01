@@ -33,6 +33,11 @@ export type BookingData = {
     name: string;
     email: string;
     phone: string;
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
     notes?: string;
   };
 };
@@ -230,7 +235,17 @@ export default function BookingFlow({ initialPackages }: BookingFlowProps) {
                 handleStepChange(6);
               }}
               onBack={() => handleStepChange(4)}
-              initialData={bookingData.customerInfo}
+              initialData={bookingData.customerInfo ? {
+                name: bookingData.customerInfo.name,
+                email: bookingData.customerInfo.email,
+                phone: bookingData.customerInfo.phone,
+                street: bookingData.customerInfo.street || "",
+                city: bookingData.customerInfo.city || "",
+                state: bookingData.customerInfo.state || "",
+                zipCode: bookingData.customerInfo.zipCode || "",
+                country: bookingData.customerInfo.country || "United States",
+                notes: bookingData.customerInfo.notes
+              } : undefined}
             />
           </motion.div>
         )}

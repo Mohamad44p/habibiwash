@@ -1,6 +1,6 @@
-import Layout from "@/components/admin/sidebar/layout";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Habibiwash Dashboard",
   description: "A modern dashboard with theme switching",
 };
@@ -10,9 +10,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <main>
-      <Layout>{children}</Layout>
-    </main>
-  );
+  return <main>{children}</main>;
 }

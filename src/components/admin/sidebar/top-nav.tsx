@@ -29,7 +29,7 @@ export default function TopNav() {
     
     // Always start with Habibiwash -> Admin
     const items: BreadcrumbItem[] = [
-      { label: 'Habibiwash', href: '/admin' }
+      { label: 'Habibiwash', href: '/admin/dashboard' }
     ];
 
     // Build up the breadcrumbs array

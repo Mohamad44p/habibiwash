@@ -4,7 +4,7 @@ import type React from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Loader2, PackageIcon, CarIcon, CalendarIcon, SparklesIcon, UserIcon } from 'lucide-react'
+import { Loader2, PackageIcon, CarIcon, CalendarIcon, SparklesIcon, UserIcon, HomeIcon } from 'lucide-react'
 import type { BookingData } from "../BookingFlow"
 import { useState } from "react"
 import { createBooking } from "@/app/actions/bookingActions"
@@ -137,6 +137,20 @@ export default function BookingSummary({ bookingData, onEdit, totalPrice }: Book
               Note: {bookingData.customerInfo.notes}
             </div>
           )}
+        </div>
+      ),
+    },
+    {
+      icon: <HomeIcon className="w-6 h-6" />,
+      title: "Service Address",
+      editStep: 6,
+      content: (
+        <div className="space-y-1">
+          <div className="font-medium text-lg">{bookingData.customerInfo?.street}</div>
+          <div className="text-muted-foreground">
+            {bookingData.customerInfo?.city}, {bookingData.customerInfo?.state} {bookingData.customerInfo?.zipCode}
+          </div>
+          <div className="text-muted-foreground">{bookingData.customerInfo?.country}</div>
         </div>
       ),
     },

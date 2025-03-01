@@ -50,6 +50,15 @@ export default function BookingsTable({
       render: (value: Booking["timeSlot"]) => `${value?.startTime} - ${value?.endTime}`,
     },
     {
+      key: "street" as keyof Booking,
+      label: "Address",
+      render: (_: unknown, booking: Booking) => (
+        <div className="max-w-[200px] truncate" title={`${booking.street}, ${booking.city}, ${booking.state} ${booking.zipCode}`}>
+          {booking.street && booking.city ? `${booking.street}, ${booking.city}` : "No address provided"}
+        </div>
+      ),
+    },
+    {
       key: "status" as keyof Booking,
       label: "Status",
       sortable: true,

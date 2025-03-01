@@ -13,10 +13,10 @@ export async function updateDashboardDate(range: DateRange | undefined) {
       params.set('to', range.to.toISOString());
     }
 
-    revalidatePath('/admin');
-    redirect(`/admin${params.toString() ? `?${params.toString()}` : ''}`);
+    revalidatePath('/admin/dashboard');
+    redirect(`/admin/dashboard${params.toString() ? `?${params.toString()}` : ''}`);
   } catch (error) {
     console.error('Error updating dashboard date:', error);
-    redirect('/admin');
+    redirect('/admin/dashboard');
   }
 }

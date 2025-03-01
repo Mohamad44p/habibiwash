@@ -118,7 +118,7 @@ export default function TermsOfService() {
             <div className="mt-4 space-y-2 text-muted-foreground">
               <p>Habibi Wash</p>
               <p>Email: habibiwash99@gmail.com</p>
-              <p>Phone: +1 (945)-309-0185</p>
+              <p>Phone:4696997933</p>
             </div>
           </section>
         </div>

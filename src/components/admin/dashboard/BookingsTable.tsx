@@ -30,6 +30,7 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
               <TableHead>Customer</TableHead>
               <TableHead>Service</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>Address</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
@@ -40,6 +41,11 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
                 <TableCell className="font-medium">{booking.customerName}</TableCell>
                 <TableCell>{booking.package.name}</TableCell>
                 <TableCell>{new Date(booking.date).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {booking.street && booking.city ? 
+                    `${booking.street}, ${booking.city}` : 
+                    "No address provided"}
+                </TableCell>
                 <TableCell>
                   <Badge variant={getStatusVariant(booking.status)}>
                     {booking.status}

@@ -22,6 +22,11 @@ export interface Booking {
   customerEmail: string;
   customerPhone: string;
   notes?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
   createdAt: Date;
   updatedAt: Date;
   totalPrice: number;  // Add this line
@@ -40,6 +45,11 @@ export type PrismaBooking = {
   customerEmail: string;
   customerPhone: string;
   notes: string | null;
+  street: string | null;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
+  country: string | null;
   status: BookingStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -59,6 +69,11 @@ export function normalizeBooking(prismaBooking: PrismaBooking): Booking {
     addOns: prismaBooking.addOns || [],
     status: prismaBooking.status || "PENDING",
     subPackageId: prismaBooking.subPackageId || undefined,
-    notes: prismaBooking.notes || undefined
+    notes: prismaBooking.notes || undefined,
+    street: prismaBooking.street || undefined,
+    city: prismaBooking.city || undefined,
+    state: prismaBooking.state || undefined,
+    zipCode: prismaBooking.zipCode || undefined,
+    country: prismaBooking.country || undefined
   };
 }

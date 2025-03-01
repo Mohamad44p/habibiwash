@@ -1,127 +1,106 @@
-import {
-  LogOut,
-  MoveUpRight,
-  Settings,
-  CreditCard,
-  FileText,
-} from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+"use client";
 
-interface MenuItem {
-  label: string;
-  value?: string;
-  href: string;
-  icon?: React.ReactNode;
-  external?: boolean;
-}
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { LogOut, Settings, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 interface Profile01Props {
   name: string;
   role: string;
   avatar: string;
-  subscription?: string;
 }
 
 const defaultProfile = {
-  name: "Eugene An",
-  role: "Prompt Engineer",
+  name: "Admin User",
+  role: "Administrator",
   avatar: "/images/avatar/avatar-01.png",
-  subscription: "Free Trial",
-} satisfies Required<Profile01Props>;
+};
 
 export default function UserProfile({
   name = defaultProfile.name,
   role = defaultProfile.role,
   avatar = defaultProfile.avatar,
-  subscription = defaultProfile.subscription,
 }: Partial<Profile01Props> = defaultProfile) {
-  const menuItems: MenuItem[] = [
-    {
-      label: "Subscription",
-      value: subscription,
-      href: "#",
-      icon: <CreditCard className="w-4 h-4" />,
-      external: false,
-    },
-    {
-      label: "Settings",
-      href: "#",
-      icon: <Settings className="w-4 h-4" />,
-    },
-    {
-      label: "Terms & Policies",
-      href: "#",
-      icon: <FileText className="w-4 h-4" />,
-      external: true,
-    },
-  ];
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Logged out",
+          description: "You have been logged out successfully",
+        });
+        router.push("/admin/login");
+        router.refresh();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to log out",
+          variant: "destructive",
+        });
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
-    <div className="w-full max-w-sm mx-auto">
-      <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
-        <div className="relative px-6 pt-12 pb-6">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="relative shrink-0">
-              <Image
-                src={avatar}
-                alt={name}
-                width={72}
-                height={72}
-                className="rounded-full ring-4 ring-white dark:ring-zinc-900 object-cover"
-              />
-              <div className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-zinc-900" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
-                {name}
-              </h2>
-              <p className="text-zinc-600 dark:text-zinc-400">{role}</p>
-            </div>
-          </div>
-          <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-6" />
-          <div className="space-y-2">
-            {menuItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="flex items-center justify-between p-2 
-                                    hover:bg-zinc-50 dark:hover:bg-zinc-800/50 
-                                    rounded-lg transition-colors duration-200"
-              >
-                <div className="flex items-center gap-2">
-                  {item.icon}
-                  <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    {item.label}
-                  </span>
-                </div>
-                <div className="flex items-center">
-                  {item.value && (
-                    <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">
-                      {item.value}
-                    </span>
-                  )}
-                  {item.external && <MoveUpRight className="w-4 h-4" />}
-                </div>
-              </Link>
-            ))}
-
-            <button
-              type="button"
-              className="w-full flex items-center justify-between p-2 
-                                hover:bg-zinc-50 dark:hover:bg-zinc-800/50 
-                                rounded-lg transition-colors duration-200"
-            >
-              <div className="flex items-center gap-2">
-                <LogOut className="w-4 h-4" />
-                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                  Logout
-                </span>
-              </div>
-            </button>
-          </div>
+    <div className="p-4">
+      <div className="flex items-center gap-4 mb-4">
+        <Avatar className="h-10 w-10">
+          <AvatarImage src={avatar} alt={name} />
+          <AvatarFallback>
+            {name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <div className="font-medium">{name}</div>
+          <div className="text-xs text-muted-foreground">{role}</div>
         </div>
+      </div>
+      <div className="space-y-1">
+        <Link href="/admin/profile">
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-muted-foreground"
+          >
+            <User className="mr-2 h-4 w-4" />
+            Profile
+          </Button>
+        </Link>
+        <Link href="/admin/settings">
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-muted-foreground"
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </Button>
+        </Link>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-muted-foreground"
+          onClick={handleLogout}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </div>
     </div>
   );
