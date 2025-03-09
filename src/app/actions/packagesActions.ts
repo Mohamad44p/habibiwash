@@ -56,7 +56,9 @@ export async function createPackage(data: PackageFormData) {
       include: packageInclude,
     });
 
+    // Revalidate both admin and home pages
     revalidatePath("/admin/packages");
+    revalidatePath("/");
     return normalizePrismaPackage(result);
   } catch (error) {
     console.error("Error creating package:", error);
@@ -95,7 +97,9 @@ export async function updatePackage(id: string, data: PackageFormData) {
       include: packageInclude,
     });
 
+    // Revalidate both admin and home pages
     revalidatePath("/admin/packages");
+    revalidatePath("/");
     const normalized = normalizePrismaPackage(result);
     return normalized ?? undefined;
   } catch (error) {
@@ -107,7 +111,9 @@ export async function updatePackage(id: string, data: PackageFormData) {
 export async function deletePackage(id: string) {
   try {
     await db.package.delete({ where: { id } });
+    // Revalidate both admin and home pages
     revalidatePath("/admin/packages");
+    revalidatePath("/");
   } catch (error) {
     console.error("Error deleting package:", error);
     throw error;

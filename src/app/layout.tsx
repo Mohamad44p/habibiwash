@@ -18,18 +18,27 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Habibiwash - Car Washing Service in Dallas, TX",
+    default: "Habibiwash - Car detailing Service in Dallas, TX",
     template: "%s | Habibiwash",
   },
   description:
-    "Book your car wash with Habibiwash, the premier car washing service in Dallas, Texas. Quick, convenient, and professional car cleaning at your fingertips.",
+    "Book your car detailing with Habibiwash, the premier car detailing service in Dallas, Texas. Quick, convenient, and professional car cleaning at your fingertips.",
   keywords: [
+    "car detailing",
     "car wash",
+    "car cleaning",
+    "car maintenance",
+    "car care",
+    "car detailing",
+    "car waxing",
+    "car polishing",
+    "car cleaning",
+    "car detailing",
     "Dallas",
     "Texas",
     "auto detailing",
     "vehicle cleaning",
-    "mobile car wash",
+    "mobile car detailing",
   ],
   authors: [{ name: "Habibiwash" }],
   creator: "Habibiwash",
@@ -43,9 +52,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Habibiwash - Premier Car Washing Service in Dallas",
+    title: "Habibiwash - Premier Car Detailing Service in Dallas",
     description:
-      "Experience the best car wash in Dallas with Habibiwash. Book your appointment today for a spotless, shiny ride.",
+      "Experience the best car detailing in Dallas with Habibiwash. Book your appointment today for a spotless, shiny ride.",
     url: "https://www.habibiwash.com",
     siteName: "Habibiwash",
     locale: "en_US",
@@ -64,9 +73,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Habibiwash - Top-rated Car Wash in Dallas",
+    title: "Habibiwash - Top-rated Car Detailing in Dallas",
     description:
-      "Get your car sparkling clean with Habibiwash, Dallas' favorite car washing service. Book now!",
+      "Get your car sparkling clean with Habibiwash, Dallas' favorite car detailing service. Book now!",
     creator: "@habibiwash",
   },
 };

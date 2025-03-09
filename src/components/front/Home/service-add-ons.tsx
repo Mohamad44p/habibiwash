@@ -3,6 +3,7 @@
 import { LucideIcon, Sparkles } from "lucide-react";
 import { AVAILABLE_ICONS } from "@/lib/icons/icons";
 import { AddOn } from "@/types/addOn";
+import { memo } from "react";
 
 const ADDON_ITEM_CLASS = "flex items-center justify-between p-2.5 rounded-xl hover:bg-accent/30 group cursor-pointer transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-transparent hover:border-primary/10 bg-background/50";
 const ADDON_ICON_WRAPPER_CLASS = "rounded-full bg-primary/5 p-1.5 group-hover:bg-primary/20 transition-colors duration-300 ring-1 ring-primary/10 group-hover:ring-primary/30";
@@ -12,7 +13,7 @@ interface ServiceAddOnsProps {
   initialAddOns: AddOn[];
 }
 
-export function ServiceAddOns({ initialAddOns }: ServiceAddOnsProps) {
+function ServiceAddOnsComponent({ initialAddOns }: ServiceAddOnsProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
       <div className="relative overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background rounded-2xl p-4 sm:p-6 shadow-2xl hover:shadow-3xl transition-all duration-500 border border-muted/20">
@@ -63,3 +64,6 @@ export function ServiceAddOns({ initialAddOns }: ServiceAddOnsProps) {
     </div>
   );
 }
+
+// Memoize the component to prevent unnecessary re-renders
+export const ServiceAddOns = memo(ServiceAddOnsComponent);

@@ -19,7 +19,9 @@ export async function createAddOn(data: AddOn) {
     },
   });
 
+  // Revalidate both admin and home pages
   revalidatePath("/admin/add-ons");
+  revalidatePath("/");
   return normalizeAddOn(result);
 }
 
@@ -34,11 +36,15 @@ export async function updateAddOn(id: string, data: AddOn) {
     },
   });
 
+  // Revalidate both admin and home pages
   revalidatePath("/admin/add-ons");
+  revalidatePath("/");
   return normalizeAddOn(result);
 }
 
 export async function deleteAddOn(id: string) {
   await db.addOn.delete({ where: { id } });
+  // Revalidate both admin and home pages
   revalidatePath("/admin/add-ons");
+  revalidatePath("/");
 }

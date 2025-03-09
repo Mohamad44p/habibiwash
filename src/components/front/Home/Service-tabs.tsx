@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,10 +27,20 @@ interface ServiceTabsProps {
   packages: Package[];
 }
 
-const AnimatedPrice = ({ price }: { price: number }) => {
+const AnimatedPrice = memo(({ price }: { price: number }) => {
   const [displayPrice, setDisplayPrice] = useState(price);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  // Only animate when the price actually changes
+  useEffect(() => {
+    if (price !== displayPrice) {
+      setShouldAnimate(true);
+    }
+  }, [price, displayPrice]);
 
   useEffect(() => {
+    if (!shouldAnimate) return;
+
     const duration = 500; // ms
     const steps = 20;
     const stepDuration = duration / steps;
@@ -47,33 +57,41 @@ const AnimatedPrice = ({ price }: { price: number }) => {
 
       if (currentStep === steps) {
         clearInterval(timer);
+        setShouldAnimate(false);
       }
     }, stepDuration);
 
     return () => clearInterval(timer);
-  }, [price, displayPrice]);
+  }, [price, displayPrice, shouldAnimate]);
 
   return (
     <span className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
       ${displayPrice.toFixed(2)}
     </span>
   );
-};
+});
 
-export default function ServiceTabs({ packages }: ServiceTabsProps) {
+AnimatedPrice.displayName = "AnimatedPrice";
+
+function ServiceTabsComponent({ packages }: ServiceTabsProps) {
   const [selectedTab, setSelectedTab] = useState(packages[0]?.id || "");
   const [selectedVehicleType, setSelectedVehicleType] = useState<VehicleType>(
     VehicleType.SEDAN
   );
 
-  const currentPackage = packages.find((pkg) => pkg.id === selectedTab);
+  // Memoize the current package to prevent unnecessary re-renders
+  const currentPackage = useMemo(() => 
+    packages.find((pkg) => pkg.id === selectedTab),
+    [packages, selectedTab]
+  );
 
-  const getPrice = (
-    prices: { vehicleType: string; price: number }[],
-    type: VehicleType
-  ) => {
-    return prices.find((p) => p.vehicleType === type)?.price || 0;
-  };
+  // Memoize the getPrice function to prevent unnecessary re-renders
+  const getPrice = useMemo(() => 
+    (prices: { vehicleType: string; price: number }[], type: VehicleType) => {
+      return prices.find((p) => p.vehicleType === type)?.price || 0;
+    },
+    []
+  );
 
   return (
     <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
@@ -123,7 +141,7 @@ export default function ServiceTabs({ packages }: ServiceTabsProps) {
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <AnimatePresence>
+        <AnimatePresence mode="wait" key={selectedTab}>
           {currentPackage?.subPackages.map((subPkg, index) => (
             <motion.div
               key={subPkg.id}
@@ -131,6 +149,7 @@ export default function ServiceTabs({ packages }: ServiceTabsProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              layout
             >
               <Card className="relative h-full flex flex-col overflow-hidden group hover:shadow-2xl transition-shadow duration-300">
                 {index === 1 && (
@@ -214,3 +233,6 @@ export default function ServiceTabs({ packages }: ServiceTabsProps) {
     </div>
   );
 }
+
+// Memoize the entire component to prevent unnecessary re-renders
+export default memo(ServiceTabsComponent);

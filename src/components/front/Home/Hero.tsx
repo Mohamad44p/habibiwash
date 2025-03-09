@@ -32,9 +32,11 @@ export default function Hero() {
                     Book Now <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline">
-                  Our Services
-                </Button>
+                <Link href="/booking">
+                  <Button size="lg" variant="outline">
+                    Our Services
+                  </Button>
+                </Link>
               </div>
               <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8">
                 <div className="space-y-2 text-center">
