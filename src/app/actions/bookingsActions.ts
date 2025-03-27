@@ -116,3 +116,19 @@ export async function updateBookingStatus(id: string, status: BookingStatus) {
   revalidatePath("/admin/bookings");
   return normalizeBooking(result as PrismaBookingResult);
 }
+
+export async function deleteBooking(id: string): Promise<boolean> {
+  try {
+    // Delete booking record
+    await db.booking.delete({
+      where: { id }
+    });
+    
+    // Revalidate the bookings page to update the UI
+    revalidatePath("/admin/bookings");
+    return true;
+  } catch (error) {
+    console.error('Error deleting booking:', error);
+    return false;
+  }
+}

@@ -57,3 +57,19 @@ export async function updateQuoteStatus(id: string, status: QuoteStatus) {
   revalidatePath("/admin/quotes");
   return { ...quote, status: quote.status as QuoteStatus };
 }
+
+export async function deleteQuote(id: string): Promise<boolean> {
+  try {
+    // Delete quote record
+    await db.quote.delete({
+      where: { id }
+    });
+    
+    // Revalidate the quotes page to update the UI
+    revalidatePath("/admin/quotes");
+    return true;
+  } catch (error) {
+    console.error('Error deleting quote:', error);
+    return false;
+  }
+}

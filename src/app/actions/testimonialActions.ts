@@ -33,7 +33,6 @@ export async function updateTestimonial(id: string, data: TestimonialFormData) {
   }
 }
 
-// Replace the any type with a proper type
 function formatTestimonial(testimonial: {
   id: string;
   name: string;
@@ -42,11 +41,13 @@ function formatTestimonial(testimonial: {
   rating: number;
   service: string;
   active: boolean;
+  imageUrl?: string | null;
   createdAt: string | Date;
   updatedAt: string | Date;
 }): Testimonial {
   return {
     ...testimonial,
+    imageUrl: testimonial.imageUrl || undefined,
     createdAt: new Date(testimonial.createdAt),
     updatedAt: new Date(testimonial.updatedAt),
   };
@@ -68,10 +69,11 @@ export async function deleteTestimonial(id: string) {
 
 export async function getTestimonials(activeOnly = false) {
   try {
-    return await db.testimonial.findMany({
+    const testimonials = await db.testimonial.findMany({
       where: activeOnly ? { active: true } : undefined,
       orderBy: { createdAt: "desc" }
     });
+    return testimonials.map(formatTestimonial);
   } catch (error) {
     console.error("Error fetching testimonials:", error);
     return [];

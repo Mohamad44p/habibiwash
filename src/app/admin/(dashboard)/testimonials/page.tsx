@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import TestimonialsTable from "@/components/admin/testimonials/TestimonialsTable";
 import { getTestimonials } from "@/app/actions/testimonialActions";
+import type { Testimonial } from "@/types/testimonial";
 
 export default async function TestimonialsPage() {
   const testimonials = await getTestimonials();
@@ -9,7 +10,7 @@ export default async function TestimonialsPage() {
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">Testimonials Management</h1>
       <Suspense fallback={<div>Loading...</div>}>
-        <TestimonialsTable initialTestimonials={testimonials} />
+        <TestimonialsTable initialTestimonials={testimonials as Testimonial[]} />
       </Suspense>
     </div>
   );

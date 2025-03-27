@@ -3,12 +3,23 @@
 import { useState } from "react"
 import type { Booking, BookingStatus } from "@/types/booking"
 import { Button } from "@/components/ui/button"
-import { Eye, CheckCircle, XCircle } from "lucide-react"
+import { Eye, CheckCircle, XCircle, Trash2 } from "lucide-react"
 import Link from "next/link"
-import { updateBookingStatus } from "@/app/actions/bookingsActions"
+import { updateBookingStatus, deleteBooking } from "@/app/actions/bookingsActions"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { DataTable } from "../packages/data-table"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function BookingsTable({
   initialBookings,
@@ -107,6 +118,37 @@ export default function BookingsTable({
               </Button>
             </>
           )}
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="sm">
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Booking</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this booking? This action cannot be undone and will permanently remove all booking data.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    const success = await deleteBooking(booking.id!);
+                    if (success) {
+                      setBookings(bookings.filter((b) => b.id !== booking.id));
+                    }
+                  }}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       ),
     },

@@ -1,27 +1,29 @@
 // app/api/upload/route.ts
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { put, del } from '@vercel/blob';
 import { nanoid } from 'nanoid';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const formData = await request.formData();
   const file = formData.get('file') as File;
 
   if (!file) {
-    return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
   }
 
   try {
-    const uniqueFilename = `${nanoid()}-${file.name}`;
-    const blob = await put(uniqueFilename, file, {
+    const blob = await put(`testimonials/${nanoid()}-${file.name}`, file, {
       access: 'public',
     });
 
-    return NextResponse.json({ url: blob.url });
+    return NextResponse.json({ 
+      success: true, 
+      url: blob.url 
+    });
   } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    console.error('Error uploading to Vercel Blob:', error);
+    return NextResponse.json({ error: 'Error uploading file' }, { status: 500 });
   }
 }
 

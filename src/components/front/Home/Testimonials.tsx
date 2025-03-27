@@ -15,6 +15,7 @@ interface Testimonial {
   comment: string;
   rating: number;
   service: string;
+  imageUrl?: string;
 }
 
 export default function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
@@ -110,8 +111,8 @@ export default function Testimonials({ testimonials }: { testimonials: Testimoni
                         >
                           <Image
                             src={
-                              getAvatarUrl(testimonial.name) ||
-                              "/placeholder.svg"
+                              testimonial.imageUrl || 
+                              getAvatarUrl(testimonial.name)
                             }
                             alt={testimonial.name}
                             fill

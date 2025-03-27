@@ -1,8 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +26,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { createTestimonial, updateTestimonial } from "@/app/actions/testimonialActions";
 import type { Testimonial, TestimonialFormData } from "@/types/testimonial";
-import { useEffect } from "react";
+import { UploadCloud, X } from "lucide-react";
 
 const testimonialSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -33,6 +35,7 @@ const testimonialSchema = z.object({
   rating: z.number().min(1).max(5),
   service: z.string().min(2, "Service must be at least 2 characters"),
   active: z.boolean().default(true),
+  imageUrl: z.string().optional(),
 });
 
 interface TestimonialDialogProps {
@@ -48,6 +51,9 @@ export function TestimonialDialog({
   testimonial,
   onSuccess,
 }: TestimonialDialogProps) {
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
   const form = useForm<TestimonialFormData>({
     resolver: zodResolver(testimonialSchema),
     defaultValues: {
@@ -66,7 +72,12 @@ export function TestimonialDialog({
         rating: testimonial.rating,
         service: testimonial.service,
         active: testimonial.active,
+        imageUrl: testimonial.imageUrl,
       });
+      
+      if (testimonial.imageUrl) {
+        setImagePreview(testimonial.imageUrl);
+      }
     } else if (!open) {
       form.reset({
         rating: 5,
@@ -76,8 +87,60 @@ export function TestimonialDialog({
         comment: '',
         service: '',
       });
+      setImagePreview(null);
     }
   }, [open, testimonial, form]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Preview the image locally
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+    
+    // Upload to Vercel Blob
+    setUploading(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+      
+      const { url } = await response.json();
+      form.setValue("imageUrl", url);
+      
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+  
+  const handleRemoveImage = () => {
+    form.setValue("imageUrl", undefined);
+    setImagePreview(null);
+  };
 
   const onSubmit = async (data: TestimonialFormData) => {
     try {
@@ -137,6 +200,50 @@ export function TestimonialDialog({
               </p>
             )}
           </div>
+          
+          <div className="space-y-2">
+            <Label>Customer Image</Label>
+            <div className="flex flex-col items-center gap-2">
+              {imagePreview ? (
+                <div className="relative w-24 h-24 overflow-hidden rounded-full border border-border">
+                  <img
+                    src={imagePreview}
+                    alt="Customer"
+                    className="object-cover w-full h-full"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-0 right-0 size-6"
+                    onClick={handleRemoveImage}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed rounded-lg p-4 text-center bg-muted/50 hover:bg-muted/70 transition-colors cursor-pointer w-full">
+                  <label
+                    htmlFor="image-upload"
+                    className="flex flex-col items-center gap-2 cursor-pointer"
+                  >
+                    <UploadCloud className="w-8 h-8 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      {uploading ? "Uploading..." : "Upload customer image"}
+                    </span>
+                    <Input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
+          </div>
 
           <div>
             <Label htmlFor="comment">Comment</Label>
@@ -186,7 +293,11 @@ export function TestimonialDialog({
             <Label htmlFor="active">Active</Label>
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button 
+            type="submit" 
+            className="w-full"
+            disabled={uploading}
+          >
             {testimonial ? "Update" : "Create"} Testimonial
           </Button>
         </form>

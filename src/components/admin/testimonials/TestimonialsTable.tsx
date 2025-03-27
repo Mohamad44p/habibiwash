@@ -30,6 +30,7 @@ interface Testimonial {
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
+  imageUrl?: string;
 }
 
 export default function TestimonialsTable({
@@ -66,6 +67,25 @@ export default function TestimonialsTable({
     {
       key: "name",
       label: "Customer",
+      render: (_, testimonial) => (
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-secondary/50 flex items-center justify-center">
+            {testimonial.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img 
+                src={testimonial.imageUrl} 
+                alt={testimonial.name} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-sm font-semibold">
+                {testimonial.name.charAt(0)}
+              </span>
+            )}
+          </div>
+          <span>{testimonial.name}</span>
+        </div>
+      ),
     },
     {
       key: "role",

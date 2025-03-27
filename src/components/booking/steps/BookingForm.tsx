@@ -28,8 +28,9 @@ const formSchema = z.object({
     .regex(phoneRegex, "Please enter a valid phone number")
     .min(10, "Phone number must be at least 10 digits"),
   street: z.string()
-    .min(5, "Street address must be at least 5 characters")
-    .max(100, "Street address must be less than 100 characters"),
+    .min(2, "Street address must be at least 2 characters")
+    .max(100, "Street address must be less than 100 characters")
+    .nonempty("Street address is required"),
   city: z.string()
     .min(2, "City must be at least 2 characters")
     .max(50, "City must be less than 50 characters"),
@@ -40,8 +41,6 @@ const formSchema = z.object({
     .min(5, "Zip code must be at least 5 characters")
     .max(10, "Zip code must be less than 10 characters"),
   country: z.string()
-    .min(2, "Country must be at least 2 characters")
-    .max(50, "Country must be less than 50 characters")
     .default("United States"),
   notes: z.string()
     .max(500, "Notes must be less than 500 characters")
@@ -228,7 +227,7 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
                   render={({ field }) => (
                     <FormItem className="mb-4">
                       <FormLabel className="flex items-center gap-2">
-                        Street Address
+                        Street Address <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input 
@@ -240,6 +239,9 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
                           )}
                         />
                       </FormControl>
+                      <FormDescription>
+                        Please enter your full US address
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -303,27 +305,6 @@ export default function BookingForm({ onSubmit, onBack, initialData }: BookingFo
                             className={cn(
                               "text-lg py-3 md:py-4",
                               errors.zipCode && "border-destructive focus-visible:ring-destructive"
-                            )}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Country" 
-                            {...field} 
-                            className={cn(
-                              "text-lg py-3 md:py-4",
-                              errors.country && "border-destructive focus-visible:ring-destructive"
                             )}
                           />
                         </FormControl>

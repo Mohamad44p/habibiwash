@@ -6,10 +6,21 @@ import type { Column } from "@/types/data-table";
 import { DataTable } from "../packages/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { updateQuoteStatus } from "@/app/actions/quoteActions";
+import { updateQuoteStatus, deleteQuote } from "@/app/actions/quoteActions";
 import { format } from "date-fns";
-import { Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function QuotesTable({
   initialQuotes,
@@ -70,6 +81,37 @@ export default function QuotesTable({
               </Button>
             </>
           )}
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="sm">
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Quote</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this quote? This action cannot be undone and will permanently remove all quote data.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    const success = await deleteQuote(quote.id);
+                    if (success) {
+                      setQuotes(quotes.filter((q) => q.id !== quote.id));
+                    }
+                  }}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       ),
     },

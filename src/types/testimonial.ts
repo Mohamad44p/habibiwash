@@ -6,6 +6,7 @@ export interface Testimonial {
   rating: number;
   service: string;
   active: boolean;
+  imageUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }

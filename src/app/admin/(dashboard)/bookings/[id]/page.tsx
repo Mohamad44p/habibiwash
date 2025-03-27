@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Car, User, Mail, Phone, MessageSquare } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Car, User, Mail, Phone, MessageSquare, Home } from "lucide-react";
 import { AVAILABLE_ICONS } from "@/lib/icons/icons";
 import { AddOn } from "@/types/booking";
 
@@ -76,6 +76,18 @@ export default async function BookingDetailsPage(
                   <Phone className="w-4 h-4 mr-3" />
                   <span>{booking.customerPhone}</span>
                 </div>
+                {booking.street && (
+                  <div className="flex items-start text-muted-foreground dark:text-muted-foreground/90">
+                    <Home className="w-4 h-4 mr-3 mt-1" />
+                    <div>
+                      <div>{booking.street}</div>
+                      <div>
+                        {booking.city}{booking.city && booking.state && ', '}
+                        {booking.state} {booking.zipCode}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
 

@@ -7,7 +7,6 @@ import { Calendar } from "@/components/ui/calendar"
 import { Card } from "@/components/ui/card"
 import { addDays, format, parse } from "date-fns"
 import { Loader2, Clock, CheckCircle } from "lucide-react"
-import { getAvailableTimeSlots } from "@/app/actions/timeSlotsActions"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { DayContentProps } from "react-day-picker";
@@ -30,13 +29,21 @@ export default function TimeSelection({ selectedDate, selectedTime, onSelect, on
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  const fetchTimeSlots = useCallback(async (date: Date) => {
+  const fetchTimeSlots = useCallback(async () => {
     setIsLoading(true)
     try {
-      const slots = await getAvailableTimeSlots(date)
-      setTimeSlots(slots)
+      // Generate default time slots from 9AM to 5PM
+      const defaultSlots: TimeSlot[] = [];
+      for (let hour = 9; hour <= 17; hour++) {
+        const formattedHour = hour.toString().padStart(2, '0');
+        defaultSlots.push({
+          startTime: `${formattedHour}:00`,
+          isBooked: false
+        });
+      }
+      setTimeSlots(defaultSlots);
     } catch (error) {
-      console.error("Error fetching time slots:", error)
+      console.error("Error setting default time slots:", error)
       setTimeSlots([])
     } finally {
       setIsLoading(false)
@@ -45,7 +52,7 @@ export default function TimeSelection({ selectedDate, selectedTime, onSelect, on
 
   useEffect(() => {
     if (date) {
-      fetchTimeSlots(date)
+      fetchTimeSlots()
     }
   }, [date, fetchTimeSlots])
 
@@ -99,7 +106,15 @@ export default function TimeSelection({ selectedDate, selectedTime, onSelect, on
                   mode="single"
                   selected={date}
                   onSelect={setDate}
-                  disabled={(date) => date < new Date() || date > addDays(new Date(), 30)}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    const compareDate = new Date(date);
+                    compareDate.setHours(0, 0, 0, 0);
+                    
+                    return compareDate < today || date > addDays(new Date(), 30);
+                  }}
                   className="rounded-md border-0 p-0"
                   classNames={{
                     months: "space-y-4",
