@@ -29,7 +29,7 @@ export default function Hero() {
               <div className="flex flex-wrap gap-4">
                 <Link href="/booking">
                   <Button size="lg" className="gap-2">
-                    Book Now <ArrowRight className="h-4 w-4" />
+                    Book Now ahmad <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/booking">
